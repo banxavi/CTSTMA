@@ -24,6 +24,10 @@ mysql = MySQL(app)
 # def temp():
 #     return render_template('template.html')
 
+@app.route('/haha')
+def demo():
+    return render_template('tmahome.html')
+
 # Function HOME
 @app.route('/',methods=['GET','POST'])
 def index():
@@ -226,24 +230,24 @@ def edit():
 
 
 # Search employee
-@app.route('/search',methods=["GET","POST"])
-def search():
-    succ=""
-    account=""
-    search = "%"+request.form['search']+"%"
-    cursor = mysql.connection.cursor()
-    sql = "SELECT * FROM Account where NAME LIKE %s or ADDRESS LIKE %s or CITY LIKE %s or COUNTRY LIKE %s or ROLE LIKE %s"
-    cursor.execute(sql,(search,search,search,search,search))
-    account = cursor.fetchall()
-    if 'idname' in session:
-        idname = session['idname'] 
-        cursor = mysql.connection.cursor()
-        cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (idname,))
-        acc = cursor.fetchone()
-        flash("Welcome {}".format(acc[1]))
-    elif 'idname' not in session:
-        flash("Welcome to TMA SOLUTONS")
-    return render_template("template.html",succ=succ,account=account)
+# @app.route('/search',methods=["GET","POST"])
+# def search():
+#     succ=""
+#     account=""
+#     search = "%"+request.form['search']+"%"
+#     cursor = mysql.connection.cursor()
+#     sql = "SELECT * FROM Account where NAME LIKE %s or ADDRESS LIKE %s or CITY LIKE %s or COUNTRY LIKE %s or ROLE LIKE %s"
+#     cursor.execute(sql,(search,search,search,search,search))
+#     account = cursor.fetchall()
+#     if 'idname' in session:
+#         idname = session['idname'] 
+#         cursor = mysql.connection.cursor()
+#         cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (idname,))
+#         acc = cursor.fetchone()
+#         flash("Welcome {}".format(acc[1]))
+#     elif 'idname' not in session:
+#         flash("Welcome to TMA SOLUTONS")
+#     return render_template("template.html",succ=succ,account=account)
 
 @app.route('/add',methods=["GET","POST"])
 def add():
@@ -253,6 +257,7 @@ def add():
     cursor.execute('SELECT * FROM Account')
     account = cursor.fetchall()
     if request.method == 'POST':
+
         if 'idname' in session:
             idname1 = session['idname'] 
             firt_name = request.form['first_name']
@@ -266,23 +271,34 @@ def add():
             country = request.form['country']
             select = request.form.get('selectrole')
             cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (idname,))
-            account = cursor.fetchone()
+            acc = cursor.fetchone()
+            flash("Welcome {}".format(acc[1]))
             if idname1!="TMA1":
                 ac = 'Only ADMIN ADD EMPLOYEE'
+                cursor.execute('SELECT * FROM Account')
+                account = cursor.fetchall()
             elif account:
                 ac = 'Account already exists!'
+                cursor.execute('SELECT * FROM Account')
+                account = cursor.fetchall()
             elif not re.match(r'[A-Za-z0-9]+', idname):
                 ac = 'Id Name must contain only characters and numbers!'
+                cursor.execute('SELECT * FROM Account')
+                account = cursor.fetchall()
             elif not idname or not password or not name or not address  or not city or not country or not select :
                 ac = 'Please fill out the form!'
+                cursor.execute('SELECT * FROM Account')
+                account = cursor.fetchall()
             elif password !=repassword:
                 ac = ' Comfirm password is wrong'
+                cursor.execute('SELECT * FROM Account')
+                account = cursor.fetchall()
             else:
                 cursor.execute('insert INTO  Account(NAME, IDNAME, PASSWORD,ADDRESS,CITY,COUNTRY,ROLE) VALUES (%s, %s, %s,%s,%s,%s,%s)',(name,idname,password,address,city,country,select,))
                 mysql.connection.commit()
                 succ = "Sign up username:"+ idname+" succesfully"
             
-    return render_template("template.html",succ=succ,ac=ac)
+    return render_template("template.html",account=account,succ=succ,ac=ac)
             
 @app.route('/pagi',methods=["GET","POST"])
 def pani():

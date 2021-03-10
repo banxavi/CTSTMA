@@ -1,45 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
 <style>
-ul {
-  height: fit-content;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #333;
-}
+  ul.abc{
+    height: fit-content;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+  }
+  
+  li.abc {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover:not(.active) {
+    background-color: #111;
+  }
+  
+  .active {
+    background-color: #4CAF50;
+  }
+  </style>
 
-li {
-  float: left;
-}
-
-li a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-li a:hover:not(.active) {
-  background-color: #111;
-}
-
-.active {
-  background-color: #4CAF50;
-}
-</style>
-</head>
-<body>
-
-<ul>
-  <li><a class="active" href="#home">Home</a></li>
-  <li><a href="#news">News</a></li>
-  <li><a href="#contact">Contact</a></li>
-  <li><a href="#about">About</a></li>
+<ul class="abc"> 
+  <li
+  class="abc"><a class="active" href="/">Home</a></li>
+  <li class="abc"><a href="#Task">Task</a></li>
+  <li class="abc"><a href="/employee">Employee List</a></li>
+  <li class="abc"><a href="#about">About</a></li>
+  <li class="abc"><a href="/logout">Logout</a></li>
 </ul>
-
-</body>
-</html>

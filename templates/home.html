@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+{% block content %}
+<style>
+  ul.abc{
+    height: fit-content;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+  }
+  
+  li.abc {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover:not(.active) {
+    background-color: #111;
+  }
+  
+  .active {
+    background-color: #4CAF50;
+  }
+  </style>
+
+<ul class="abc"> 
+  <li
+  class="abc"><a class="active" href="/">Home</a></li>
+  <li class="abc"><a href="#news">News</a></li>
+  <li class="abc"><a href="#contact">Contact</a></li>
+  <li class="abc"><a href="#about">About</a></li>
+  <li class="abc"><a href="/logout">Logout</a></li>
+</ul>
+<div class="container">
+  
+    <div class="jumbotron">
+      
+        <h1 class="display-4">Welcome !</h1>
+        <hr class="my-4">
+        <form action="/employee" method="POST" class="form-group">
+        <p class="lead">
+          <hr>
+          {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <ul>
+              {% for message in messages %}
+              <li>{{ message }}</li>
+              {% endfor %}
+          </ul>
+          {% endif %}
+          {% endwith %}
+          <div>
+          
+          <tr>
+            {% for account in ac %}
+             <td>{{account}}</td>
+             <br/>
+             {% endfor %}
+            </div>
+          <button class="btn btn-primary btn-lg" href="/employee">List Employee</button>
+          <a class="btn btn-primary btn-lg" href="/logout" role="button">Logout</a>
+
+        </tr>
+        </p>
+      </form>
+      </div>
+</div>
+{% endblock %}

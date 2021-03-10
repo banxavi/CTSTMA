@@ -6,7 +6,6 @@ import MySQLdb.cursors
 import pymysql
 import re
 from pymysql import cursors
-from flask_paginate import Pagination, get_page_parameter
 from werkzeug.utils import format_string
 
 
@@ -21,7 +20,7 @@ mysql = MySQL(app)
 
 
 # @app.route('/template')
-# def temp():
+# def temp(): anh yeu em
 #     return render_template('template.html')
 
 @app.route('/haha')

@@ -18,6 +18,11 @@ app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'Company'
 mysql = MySQL(app) 
 
+
+@app.route('/hh')
+def hh():
+    return render_template("chdn.html")
+
 # Function HOME
 @app.route('/',methods=['GET','POST'])
 def index():

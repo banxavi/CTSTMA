@@ -15,13 +15,11 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = '123456'
-app.config['MYSQL_DB'] = 'Company'
+app.config['MYSQL_DB'] = 'cts'
 mysql = MySQL(app) 
 
 
-@app.route('/hh')
-def hh():
-    return render_template("chdn.html")
+
 
 # Function HOME
 @app.route('/',methods=['GET','POST'])
@@ -29,10 +27,10 @@ def index():
     if 'idname' in session:
         tma = session['idname']
         cursor = mysql.connection.cursor() 
-        cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (tma,))
+        cursor.execute('SELECT * FROM employee WHERE username = %s', (tma,))
         account = cursor.fetchone()
-        flash("Welcome {}".format(account[1]))
-        return render_template('home.html')
+        flash("Welcome {}".format(account[3]))
+        return render_template('home.html',tmarole=tmarole)
     # elif 'idname' not in session:
     #     return render_template('home.html')
     else:
@@ -40,35 +38,37 @@ def index():
 @app.route('/ha',methods=['GET','POST'])
 def ha():
         cursor = mysql.connection.cursor() 
-        cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (tma,))
+        cursor.execute('SELECT * FROM employee WHERE username = %s', (tma,))
         account = cursor.fetchone()
-        flash("Welcome {}".format(account[1]))
-        return render_template('home.html')
+        flash("Welcome {}".format(account[3]))
+        return render_template('home.html',tmarole=tmarole)
 # Function logi
 @app.route('/logi',methods=['GET','POST'])
 def logi():
     loi = None
     global tmaname
     global tma
+    global tmarole
     try:
         if request.method == 'POST':
             tma = request.form['idname']
             password = request.form['password']
             value = request.form.getlist('check') 
             cursor = mysql.connection.cursor() 
-            cursor.execute('SELECT * FROM Account WHERE IDNAME = %s AND PASSWORD = %s', (tma, password,))
+            cursor.execute('SELECT * FROM employee WHERE username = %s AND password = %s', (tma, password,))
             account = cursor.fetchone()
-            tmaname = account[1]
+            tmaname = account[3]
+            tmarole = account[9]
             # Check account and remember save in session
             if account and value == [u'check']:
                 session['idname'] = request.form['idname']
                 flash("Welcome {}".format(tmaname))
-                return render_template('/home.html')
+                return render_template('/home.html',tmarole=tmarole)
                 # Redirect to home page
             # Check remember not save in session
             elif account:
                 flash("Welcome {}".format(tmaname))
-                return render_template('/home.html')
+                return render_template('/home.html',tmarole=tmarole)
     except:
         loi = 'Incorrect idname/password!'
     return render_template("logi.html",loi=loi)
@@ -112,7 +112,7 @@ def logout():
     session.pop('idname', None)
     return render_template("logi.html")
 
-# Function LAYOUT
+# Function LAYOUT MENU
 @app.route('/layout')
 def layout():
     return render_template("layout.html")
@@ -123,14 +123,14 @@ def home():
     return render_template("home.html")
 
 
-# Function EMPLOYEE
+# Function EMPLOYEE MANAGEMENT
 @app.route('/employee',methods=['GET','POST'])
 def employee():
     cursor = mysql.connection.cursor() 
-    cursor.execute('SELECT * FROM Account')
+    cursor.execute('SELECT * FROM employee')
     account = cursor.fetchall()
     flash("Welcome {}".format(tmaname))
-    return render_template("template.html",account=account)
+    return render_template("employeeadmin.html",account=account)
 
 
 #Function VIEW EMPLOYEE
@@ -144,7 +144,7 @@ def view(id):
     cursor = mysql.connection.cursor()
     flash("Welcome {}".format(tmaname))
     succ = id
-    return render_template("template.html",succ=succ,account=account)
+    return render_template("employeeadmin.html",succ=succ,account=account)
 
 #Function DELETE EMPLOYEE
 @app.route('/delete/<id>/',methods=["GET","POST"])
@@ -154,16 +154,13 @@ def delete(id):
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM Account')
     account = cursor.fetchall()
-    # if 'idname' in session:
-    #     idname = session['idname'] 
-    #     aa = id
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (tma,))
     acc = cursor.fetchone()
     flash("Welcome {}".format(acc[1]))
     if int(acc[0]) == int(id):
         ac= "Can't delete yourself"
-        return render_template("template.html",account=account,ac=ac)
+        return render_template("employeeadmin.html",account=account,ac=ac)
     elif acc[7]=="ADMIN":
         cursor = mysql.connection.cursor()
         cursor.execute('DELETE FROM Account WHERE TT=%s',(id,))
@@ -171,16 +168,12 @@ def delete(id):
         cursor.execute('SELECT * FROM Account')
         account = cursor.fetchall()
         succ = "DELETE " + id + " SUCCESSFUL"
-        return render_template("template.html",account=account,succ=succ)
+        return render_template("employeeadmin.html",account=account,succ=succ)
     else:
         cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (tma,))
         ac = "Only ADMIN DELTE"
-        return render_template("template.html",account=account,ac=ac)
+        return render_template("employeeadmin.html",account=account,ac=ac)
          
-    # elif 'idname' not in session:
-    #     flash("Welcome TMA SOLUTION")
-    #     ac = "PLEASE SAVE SESSION TO ACTION"
-    #     return render_template("template.html",account=account,ac=ac)
 
 #Function EDIT EMPLOYEE
 @app.route('/edit',methods=["GET","POST"])
@@ -206,31 +199,11 @@ def edit():
             succ = "UPDATED SUCCESSFUL"
             cursor.execute('SELECT * FROM Account')
             account = cursor.fetchall()
-            return render_template("template.html",account=account,succ=succ)
+            return render_template("employeeadmin.html",account=account,succ=succ)
         else:
             ac = "ONLY UPDATE YOUR INFORMATION"
-            return render_template("template.html",account=account,ac=ac)
+            return render_template("employeeadmin.html",account=account,ac=ac)
 
-
-# Search employee
-# @app.route('/search',methods=["GET","POST"])
-# def search():
-#     succ=""
-#     account=""
-#     search = "%"+request.form['search']+"%"
-#     cursor = mysql.connection.cursor()
-#     sql = "SELECT * FROM Account where NAME LIKE %s or ADDRESS LIKE %s or CITY LIKE %s or COUNTRY LIKE %s or ROLE LIKE %s"
-#     cursor.execute(sql,(search,search,search,search,search))
-#     account = cursor.fetchall()
-#     if 'idname' in session:
-#         idname = session['idname'] 
-#         cursor = mysql.connection.cursor()
-#         cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (idname,))
-#         acc = cursor.fetchone()
-#         flash("Welcome {}".format(acc[1]))
-#     elif 'idname' not in session:
-#         flash("Welcome to TMA SOLUTONS")
-#     return render_template("template.html",succ=succ,account=account)
 
 @app.route('/add',methods=["GET","POST"])
 def add():
@@ -279,7 +252,24 @@ def add():
             cursor.execute('insert INTO  Account(NAME, IDNAME, PASSWORD,ADDRESS,CITY,COUNTRY,ROLE) VALUES (%s, %s, %s,%s,%s,%s,%s)',(name,idname,password,address,city,country,select,))
             mysql.connection.commit()
             succ = "Sign up username:"+ idname+" succesfully"
-    return render_template("template.html",account=account,succ=succ,ac=ac)
+    return render_template("employeeadmin.html",account=account,succ=succ,ac=ac)
+# Mission Management
+@app.route('/nhiemvu',methods=['GET','POST'])
+def nhiemvu():
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM mission')
+    account = cursor.fetchall()
+    flash("Welcome {}".format(tmaname))
+    return render_template('missionadmin.html',account=account)
+
+# Reward Management
+@app.route('/doithuong',methods=['GET','POST'])
+def doithuong():
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM exchange')
+    account = cursor.fetchall()
+    flash("Welcome {}".format(tmaname))
+    return render_template('rewardadmin.html',account=account)
 
 app.run(debug=True)
 

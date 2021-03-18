@@ -24,6 +24,7 @@ mysql = MySQL(app)
 # Function HOME
 @app.route('/',methods=['GET','POST'])
 def index():
+    tmarole =""
     if 'idname' in session:
         tma = session['idname']
         cursor = mysql.connection.cursor() 
@@ -34,7 +35,7 @@ def index():
     # elif 'idname' not in session:
     #     return render_template('home.html')
     else:
-        return render_template('chdn.html')
+        return render_template('logi.html')
 @app.route('/ha',methods=['GET','POST'])
 def ha():
         cursor = mysql.connection.cursor() 
@@ -55,10 +56,10 @@ def logi():
             password = request.form['password']
             value = request.form.getlist('check') 
             cursor = mysql.connection.cursor() 
-            cursor.execute('SELECT * FROM employee WHERE username = %s AND password = %s', (tma, password,))
+            cursor.execute('SELECT * FROM employee WHERE email = %s AND password = %s', (tma, password,))
             account = cursor.fetchone()
             tmaname = account[3]
-            tmarole = account[9]
+            tmarole = account[10]
             # Check account and remember save in session
             if account and value == [u'check']:
                 session['idname'] = request.form['idname']
@@ -129,8 +130,14 @@ def employee():
     cursor = mysql.connection.cursor() 
     cursor.execute('SELECT * FROM employee')
     account = cursor.fetchall()
+    a = 1
+    cursor.execute('select mission.id_mission, employee.name_employ, mission.name_mission , mission.point , missionprocess.status  from \
+employee, mission, missionprocess \
+where missionprocess.id_employee=employee.id_employee and missionprocess.id_mission=mission.id_mission \
+and  employee.id_employee=%s',(a,))
+    x = cursor.fetchall()
     flash("Welcome {}".format(tmaname))
-    return render_template("employeeadmin.html",account=account)
+    return render_template("employeeadmin.html",account=account,x=x)
 
 
 #Function VIEW EMPLOYEE

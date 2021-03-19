@@ -1,0 +1,136 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<body>
+
+
+  
+   <div class="form-group">
+    <div class="col-md-8 text-right">
+      <h1 >CTS TMA</h1>
+    
+    </div>
+    </div>
+
+    <h1 style="   font-size: 50px;
+    font-weight: 700;
+    color:red ; padding: 0 20px;" >CTS TMA</h1>
+
+
+
+    <div class="">
+        <h1 style="text-align: center;">Thông Tin Cá Nhân</h1>
+     <div style="padding: 0 100px;" class="form-group" >
+    <img src="https://img4.thuthuatphanmem.vn/uploads/2020/03/23/anh-de-thuong-cua-rose-black-pink_051300075.jpg" alt="Avatar" style="width:80px;height:80px;border:0;" class="avatar">
+      </div>
+    <a style="padding: 0 100px;" href="$">Upload file</a>
+    <form action="/#" method="POST"> 
+
+
+    <div style="padding: 0 100px;" class="form-group">
+    <div class="col-md-6.5 text-right">
+        <label name ="editdiem" value =""><b>Điểm:1000</b></label>
+        
+    </div>
+    </div>
+    <div style="padding: 0 100px;" class="form-group">
+      <label for="usr">Họ Tên:</label>
+      <input type="text" class="form-control" name="edithoten">
+    </div>
+    <div style="padding: 0 100px;" class="form-group">
+      <div class="row">
+                <div class="col">
+                    <label for="pwd">Địa Chỉ:</label>
+                    <input type="text" class="form-control" name="editdiachi">
+                </div>
+                <div class="col">
+                    <label for="pwd">Email:</label>
+                    <input type="email" class="form-control" name="editemail">
+                </div>
+        </div>    
+    </div>
+    <div style="padding: 0 100px;" class="form-group">
+      <div class="row">
+                <div class="col">
+                    <label for="pwd">Ngày sinh:</label>
+                    <input type="date" class="form-control" name="editngaysinh">
+                </div>
+                <div class="col">
+                    <label for="pwd">Số Điện Thoại:</label>
+                    <input type="number" class="form-control" name="editsodt">
+                </div>
+        </div>        	
+    </div>
+
+    <div style="padding: 0 100px;" class="form-group">
+      <div class="row">
+                <div class="col">
+                    <label for="pwd">Chức vụ:</label>
+                    <input type="text" class="form-control" name="eidtchucvu">
+                </div>
+                <div class="col">
+                    
+                     <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">Giới Tính</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect01">
+                    <option selected>Choose...</option>
+                    <option value="1">Nam</option>
+                    <option value="2">Nữ</option>
+                </select>
+                </div>
+        </div>        	
+    </div>
+
+    <div style="padding: 0 100px;" class = "form-group">
+        <div class="col" align="center">
+            <button type="submit" class="btn btn-primary">Cập Nhật</button>
+        </div> 
+        <div class="col-md-6.5 text-right">
+        <a for="pwd" href="" data-toggle="modal" data-target="#myModal">Đổi mật khẩu</a>
+        </div >
+      </form>
+
+
+        
+        <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          
+          <h4 class="modal-title" align = "center">Đổi Mật Khẩu</h4>
+        </div>
+        <div class="modal-body">
+          <form action="/" method="POST">
+           <div class="form-group">
+                <label for="usr">Mật Khẩu Cũ:</label>
+                <input type="password" class="form-control"name="editmkcu">
+            </div>
+            <div class="form-group">
+                <label for="usr">Mật Khẩu Mới:</label>
+                <input type="password" class="form-control" name="editmkcu">
+            </div>
+            <div class="form-group">
+                <label for="usr">Nhập Lại Mật Khẩu Mới:</label>
+                <input type="password" class="form-control" name="editmkcu">
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" type='submit'>Cập Nhật</button>
+          <button type="button"class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        </div>
+      </form>
+      
+      </div>
+      
+    </div>
+  </div>
+  </form>
+</div>
+</body>
+
+{% endblock  %}

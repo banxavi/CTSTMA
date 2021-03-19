@@ -1,6 +1,6 @@
 from flask.templating import render_template
 from flask import Flask, render_template, redirect,url_for,request,flash,session,sessions
-
+from app import app
 from flask_mysqldb import MySQL 
 import MySQLdb.cursors 
 import pymysql
@@ -9,7 +9,7 @@ from pymysql import cursors
 from werkzeug.utils import format_string
 
 
-app = Flask(__name__,template_folder='templates')
+
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 app.config['MYSQL_HOST'] = 'localhost'
@@ -18,8 +18,7 @@ app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'cts'
 mysql = MySQL(app) 
 
-
-
+# app = Flask(__name__,template_folder='../app/templates')
 
 # Function HOME
 @app.route('/',methods=['GET','POST'])
@@ -28,7 +27,7 @@ def index():
     if 'idname' in session:
         tma = session['idname']
         cursor = mysql.connection.cursor() 
-        cursor.execute('SELECT * FROM employee WHERE username = %s', (tma,))
+        cursor.execute('SELECT * FROM employee WHERE email = %s', (tma,))
         account = cursor.fetchone()
         flash("Welcome {}".format(account[3]))
         return render_template('home.html',tmarole=tmarole)
@@ -38,10 +37,10 @@ def index():
         return render_template('logi.html')
 @app.route('/ha',methods=['GET','POST'])
 def ha():
-        cursor = mysql.connection.cursor() 
-        cursor.execute('SELECT * FROM employee WHERE username = %s', (tma,))
-        account = cursor.fetchone()
-        flash("Welcome {}".format(account[3]))
+        # cursor = mysql.connection.cursor() 
+        # cursor.execute('SELECT * FROM employee WHERE email = %s', (tma,))
+        # account = cursor.fetchone()
+        # flash("Welcome {}".format(account[3]))
         return render_template('home.html',tmarole=tmarole)
 # Function logi
 @app.route('/logi',methods=['GET','POST'])
@@ -60,19 +59,18 @@ def logi():
             account = cursor.fetchone()
             tmaname = account[3]
             tmarole = account[10]
+            
             # Check account and remember save in session
             if account and value == [u'check']:
                 session['idname'] = request.form['idname']
-                flash("Welcome {}".format(tmaname))
+                flash("Welcome {}".format(tmaname))      
                 return render_template('/home.html',tmarole=tmarole)
-                # Redirect to home page
-            # Check remember not save in session
             elif account:
                 flash("Welcome {}".format(tmaname))
                 return render_template('/home.html',tmarole=tmarole)
     except:
         loi = 'Incorrect idname/password!'
-    return render_template("logi.html",loi=loi)
+    return render_template("res.html",loi=loi)
     
 #Function REGISTER 
 @app.route('/regis',methods=['GET','POST'])
@@ -104,14 +102,14 @@ def signup():
             cursor.execute('insert INTO  Account(NAME, IDNAME, PASSWORD,ADDRESS,CITY,COUNTRY,ROLE) VALUES (%s, %s, %s,%s,%s,%s,%s)',(name,idname,password,address,city,country,role,))
             mysql.connection.commit()
             loi = "Sign up succesfully"
-    return render_template("regis.html",loi=loi)
+    return render_template("res.html",loi=loi)
 
 
 # Function LOGOUT
 @app.route('/logout')
 def logout():
     session.pop('idname', None)
-    return render_template("logi.html")
+    return render_template("res.html")
 
 # Function LAYOUT MENU
 @app.route('/layout')
@@ -211,7 +209,7 @@ def edit():
             ac = "ONLY UPDATE YOUR INFORMATION"
             return render_template("employeeadmin.html",account=account,ac=ac)
 
-
+# Add
 @app.route('/add',methods=["GET","POST"])
 def add():
     ac=""
@@ -267,7 +265,7 @@ def nhiemvu():
     cursor.execute('SELECT * FROM mission')
     account = cursor.fetchall()
     flash("Welcome {}".format(tmaname))
-    return render_template('missionadmin.html',account=account)
+    return render_template('missionadmin.html',page='nhiemvu',account=account)
 
 # Reward Management
 @app.route('/doithuong',methods=['GET','POST'])
@@ -277,6 +275,37 @@ def doithuong():
     account = cursor.fetchall()
     flash("Welcome {}".format(tmaname))
     return render_template('rewardadmin.html',account=account)
+
+# Danh sách nhiệm vụ user
+
+@app.route('/nhiemvuuser',methods=['GET','POST'])
+def nhiemvuuser():
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM mission')
+    account = cursor.fetchall()
+
+    a = 2
+
+    cursor.execute("select mission.id_mission, mission.name_mission\
+        ,mission.startdate,mission.enddate , mission.point , \
+        missionprocess.status  from employee, mission, missionprocess\
+        where missionprocess.id_employee=employee.id_employee and \
+        missionprocess.id_mission=mission.id_mission \
+        and employee.id_employee = %s",(a,))
+    x = cursor.fetchall()
+    flash("Welcome {}".format(tmaname))
+    return render_template('nhiemvuuser.html',account=account , x=x)
+
+# Thông tin cá nhân user
+@app.route('/canhanuser')
+def canhanuser():
+    return render_template('editprofile.html')
+
+# Đổi thưởng user
+@app.route('/doithuonguser')
+def doithuonguser():
+    return render_template('exchange.html')
+
 
 app.run(debug=True)
 

@@ -142,12 +142,14 @@ $(document).ready(function(){
   
 <body>
     <form action="#" method="POST" class="form-group">
-<div class="container-xl">
-    <div class="table-responsive">
+<div> 
+    <div>
         <div class="table-wrapper">
             <div class="table-title">
-                <div class="row">
-                    <div class="col-sm-8"><h1 class="text-danger" >CTS TMA</h1></div>
+                <div class="row" style="margin-top: 35px;">
+                    <div class="col-sm-8"><h1 style="   font-size: 50px;
+                        font-weight: 700;
+                        color:red">CTS TMA</h1></div>
                     {% with messages = get_flashed_messages() %}
                     {% if messages %}
                     <ul>
@@ -163,7 +165,7 @@ $(document).ready(function(){
                  {% endwith %}
                
                 </div>
-                
+           
             </div>
           
             <table id="example" class="table table-striped table-hover table-bordered">

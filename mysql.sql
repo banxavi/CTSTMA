@@ -1,6 +1,6 @@
 create database cts
 use cts
-select * from employee
+
 select employee.username , mission.id_mission,mission.name_mission,mission.point,mission.state 
 from employee, `cts`.`mission` 
  where employee.id_mission = mission.id_mission  and employee.username='nhat'
@@ -13,13 +13,18 @@ INSERT INTO `cts`.`mission`
  (`name_mission`, `startdate`, `enddate`, `point`, `describe`, `state`, `sum_mission`) 
  VALUES ('Da banh', '2021/4/4', '2022/4/4', '50', 'Da banh tip cho tma', 'con', '12');
 select * from missionprocess
-select mission.id_mission, employee.name_employ, mission.name_mission , mission.point , missionprocess.status  from 
-employee, mission, missionprocess
+
+select * from employee
+select mission.id_mission, mission.name_mission,mission.startdate,mission.enddate , mission.point , 
+missionprocess.status  from employee, mission, missionprocess
 where missionprocess.id_employee=employee.id_employee and missionprocess.id_mission=mission.id_mission 
-and  employee.id_employee = 1
+and  employee.id_employee = 3
+
+select * from missionprocess
+
 INSERT INTO `cts`.`missionprocess`
  (`id_employee`, `id_mission`, `status`)
- VALUES ('1', '1', 'Đang làm');
+ VALUES ('2', '4', 'Đang làm');
 
 select * from exchange
 INSERT INTO `cts`.`exchange` (`id_gitf`, `name`, `sum_gift`, `point`) VALUES ('1', 'nuoc loc', '12', '50');

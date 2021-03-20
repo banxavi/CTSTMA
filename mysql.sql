@@ -18,7 +18,7 @@ select * from employee
 select mission.id_mission, mission.name_mission,mission.startdate,mission.enddate , mission.point , 
 missionprocess.status  from employee, mission, missionprocess
 where missionprocess.id_employee=employee.id_employee and missionprocess.id_mission=mission.id_mission 
-and  employee.id_employee = 3
+and  employee.id_employee = 2
 
 select * from missionprocess
 

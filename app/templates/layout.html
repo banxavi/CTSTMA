@@ -173,7 +173,7 @@
     </style>
 
 
-  {% if session['idname'] %}
+  {% if session['idname'] =="abc" or session['admin']=="abc" %}
 
   <header>
     <div class="wrapper">
@@ -193,7 +193,7 @@
 
   {% endif %}
 
-  {% if not session['idname'] %}
+  {% if session['idname'] !="abc"%}
   <header> 
     <div
     class="wrapper">

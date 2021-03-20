@@ -1,3 +1,4 @@
+from typing import ContextManager
 from flask.templating import render_template
 from flask import Flask, render_template, redirect,url_for,request,flash,session,sessions
 from app import app
@@ -7,7 +8,7 @@ import pymysql
 import re
 from pymysql import cursors
 from werkzeug.utils import format_string
-
+import configadmin
 
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -23,53 +24,57 @@ mysql = MySQL(app)
 # Function HOME
 @app.route('/',methods=['GET','POST'])
 def index():
-    tmarole =""
+    
     if 'idname' in session:
-        tma = session['idname']
-        cursor = mysql.connection.cursor() 
-        cursor.execute('SELECT * FROM employee WHERE email = %s', (tma,))
-        account = cursor.fetchone()
-        flash("Welcome {}".format(account[3]))
-        return render_template('home.html',tmarole=tmarole)
+        # tma = session['idname']
+        # cursor = mysql.connection.cursor() 
+        # cursor.execute('SELECT * FROM employee WHERE email = %s', (tma,))
+        # account = cursor.fetchone()
+        # flash("Welcome {}".format(account[3]))
+        return render_template('home.html')
     # elif 'idname' not in session:
     #     return render_template('home.html')
+
     else:
-        return render_template('logi.html')
+        return render_template('res.html')
 @app.route('/ha',methods=['GET','POST'])
 def ha():
         # cursor = mysql.connection.cursor() 
         # cursor.execute('SELECT * FROM employee WHERE email = %s', (tma,))
         # account = cursor.fetchone()
         # flash("Welcome {}".format(account[3]))
-        return render_template('home.html',tmarole=tmarole)
+        return render_template('home.html',)
 # Function logi
 @app.route('/logi',methods=['GET','POST'])
 def logi():
     loi = None
     global tmaname
     global tma
-    global tmarole
-    try:
-        if request.method == 'POST':
-            tma = request.form['idname']
-            password = request.form['password']
-            value = request.form.getlist('check') 
-            cursor = mysql.connection.cursor() 
-            cursor.execute('SELECT * FROM employee WHERE email = %s AND password = %s', (tma, password,))
-            account = cursor.fetchone()
-            tmaname = account[3]
-            tmarole = account[10]
-            
-            # Check account and remember save in session
-            if account and value == [u'check']:
-                session['idname'] = request.form['idname']
-                flash("Welcome {}".format(tmaname))      
-                return render_template('/home.html',tmarole=tmarole)
-            elif account:
-                flash("Welcome {}".format(tmaname))
-                return render_template('/home.html',tmarole=tmarole)
-    except:
-        loi = 'Incorrect idname/password!'
+    # try:
+    if request.method == 'POST':
+        tma = request.form['idname']
+        password = request.form['password']
+        value = request.form.getlist('check') 
+        cursor = mysql.connection.cursor() 
+        cursor.execute('SELECT * FROM employee WHERE email = %s AND password = %s', (tma, password,))
+        account = cursor.fetchone()
+        tmaname = ""
+        if request.form['idname']==configadmin.username and request.form['password']==configadmin.password and value==[u'check']:
+            session['idname'] = request.form['idname']     
+            return render_template('/home.html')
+
+        if tma==configadmin.username and password==configadmin.password:
+            return render_template('/home.html')
+
+        if account and value == [u'check']:
+            session['idname'] = request.form['idname']              
+            return render_template('/home.html')
+
+        if account:
+            return render_template('/home.html')
+
+        else:
+            loi = 'Tài khoản hoặc mật khẩu sai'
     return render_template("res.html",loi=loi)
     
 #Function REGISTER 

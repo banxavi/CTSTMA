@@ -173,7 +173,7 @@
     </style>
 
 
-  {% if session['idname'] =="abc" or session['admin']=="abc" %}
+  {% if session['idname']  =="abc"%}
 
   <header>
     <div class="wrapper">
@@ -181,12 +181,14 @@
         <a href="#">Hello Admin</a>
       </div>
       <nav>
-        <a href="/ha">Trang chủ</a>
+    
+      <a href="/ha">Trang chủ</a>
          <a href="/nhiemvu">Quản lý nhiệm vụ</a>
          <a href="/employee">Quản lý nhân viên</a>
          <a href="/doithuong">Quản lý đổi thưởng</a>
          <a href="#">Thông báo</a>
          <a href="/logout">Đăng xuất</a>
+      
       </nav>
     </div>
   </header>
@@ -208,12 +210,14 @@
    <a href="/canhanuser">Thông tin cá nhân</a>
     <a href="/doithuonguser">Đổi quà</a>
     <a href="#about">Thông báo</a>
-    <a href="/logout">Logout</a>
+    <a href="/logout">Đăng xuất</a>
   </div>
 </nav>
     </header>
 
-
+<script>
+  
+</script> 
 {% endif %}
 
 <body>

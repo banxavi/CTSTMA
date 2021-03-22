@@ -15,16 +15,21 @@ INSERT INTO `cts`.`mission`
 select * from missionprocess
 
 select * from employee
-select mission.id_mission, mission.name_mission,mission.startdate,mission.enddate , mission.point , 
-missionprocess.status  from employee, mission, missionprocess
+select missionprocess.id_process, mission.id_mission, mission.name_mission,mission.describe,mission.startdate,mission.enddate , mission.point , 
+missionprocess.status    from employee, mission, missionprocess
 where missionprocess.id_employee=employee.id_employee and missionprocess.id_mission=mission.id_mission 
-and  employee.id_employee = 2
+and  employee.email = 'ban'
 
 select * from missionprocess
 
 INSERT INTO `cts`.`missionprocess`
  (`id_employee`, `id_mission`, `status`)
- VALUES ('2', '4', 'Đang làm');
+ VALUES ('2', '4', 'Đang làm')
+ 
+ UPDATE `cts`.`missionprocess` SET `status` = 'Đang làm' WHERE (`id_process` = '4');
+ UPDATE `cts`.`missionprocess` SET `status` = 'Đang làm' WHERE (`id_process` = '2');
+
+UPDATE `cts`.`missionprocess` SET `status` = 'Đang làm' WHERE (`id_process` = '6');
 
 select * from exchange
 INSERT INTO `cts`.`exchange` (`id_gitf`, `name`, `sum_gift`, `point`) VALUES ('1', 'nuoc loc', '12', '50');

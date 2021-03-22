@@ -150,17 +150,6 @@ $(document).ready(function(){
                     <div class="col-sm-8"><h1 style="   font-size: 50px;
                         font-weight: 700;
                         color:red" >CTS TMA</h1></div>
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                    <ul>
-                        {% for message in messages %}
-                        <li>{{ message }}</li>
-                        {% endfor %}
-                    
-                      
-                    </ul>
-                    {% endif %}
-                 {% endwith %}
                
                 </div>
       
@@ -185,12 +174,12 @@ $(document).ready(function(){
                     <tr>
                         <td>{{a.0}}</td>
                         <td>{{a.3}}</td>
-                        <td style="text-align: center;"><input type="date" value="{{a.4}}" readonly></td>
+                        <td style="text-align: center;"><input style="text-align: center;" type="date" value="{{a.4}}" readonly></td>
                         <td style="text-align: center;">{{a.6}}</td>
                         <td style="text-align: center;">{{a.10}}</td>
                         <td style="text-align: center;">{{a.7}}</td>
                         <td style="text-align: center;">
-                            <a href="/view/{{a.0}}"  data-toggle="modal" data-target="#modalview{{a.0}}" class="view" title="Xem" ><i class="material-icons">remove_red_eye</i></a>
+                            <a href="/view"  data-toggle="modal" data-target="#modalview{{a.0}}" class="view" title="Xem" ><i class="material-icons">remove_red_eye</i></a>
                             <a href="/delete/{{a.0}}" class="delete" title="Cấm" data-toggle="tooltip"> <i class="material-icons">block</i></a>
                         </td>
                     </tr>

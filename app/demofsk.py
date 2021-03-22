@@ -25,24 +25,12 @@ mysql = MySQL(app)
 @app.route('/',methods=['GET','POST'])
 def index():
     
-    if 'idname' in session:
-        # tma = session['idname']
-        # cursor = mysql.connection.cursor() 
-        # cursor.execute('SELECT * FROM employee WHERE email = %s', (tma,))
-        # account = cursor.fetchone()
-        # flash("Welcome {}".format(account[3]))
+    if 'idname' in session: 
         return render_template('home.html')
-    # elif 'idname' not in session:
-    #     return render_template('home.html')
-
     else:
         return render_template('res.html')
 @app.route('/ha',methods=['GET','POST'])
 def ha():
-        # cursor = mysql.connection.cursor() 
-        # cursor.execute('SELECT * FROM employee WHERE email = %s', (tma,))
-        # account = cursor.fetchone()
-        # flash("Welcome {}".format(account[3]))
         return render_template('home.html',)
 # Function logi
 @app.route('/logi',methods=['GET','POST'])
@@ -50,6 +38,7 @@ def logi():
     loi = None
     global tmaname
     global tma
+    global idempl
     # try:
     if request.method == 'POST':
         tma = request.form['idname']
@@ -58,19 +47,15 @@ def logi():
         cursor = mysql.connection.cursor() 
         cursor.execute('SELECT * FROM employee WHERE email = %s AND password = %s', (tma, password,))
         account = cursor.fetchone()
-        tmaname = ""
-        if request.form['idname']==configadmin.username and request.form['password']==configadmin.password and value==[u'check']:
-            session['idname'] = request.form['idname']     
-            return render_template('/home.html')
+        # idempl = account[0]
 
         if tma==configadmin.username and password==configadmin.password:
-            return render_template('/home.html')
-
-        if account and value == [u'check']:
-            session['idname'] = request.form['idname']              
+            session['idname'] = request.form['idname']  
             return render_template('/home.html')
 
         if account:
+            session['idname'] = request.form['idname'] 
+            tmaname = account[3]             
             return render_template('/home.html')
 
         else:
@@ -139,7 +124,6 @@ employee, mission, missionprocess \
 where missionprocess.id_employee=employee.id_employee and missionprocess.id_mission=mission.id_mission \
 and  employee.id_employee=%s',(a,))
     x = cursor.fetchall()
-    flash("Welcome {}".format(tmaname))
     return render_template("employeeadmin.html",account=account,x=x)
 
 
@@ -152,7 +136,6 @@ def view(id):
     account = cursor.fetchall()
 
     cursor = mysql.connection.cursor()
-    flash("Welcome {}".format(tmaname))
     succ = id
     return render_template("employeeadmin.html",succ=succ,account=account)
 
@@ -269,8 +252,7 @@ def nhiemvu():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM mission')
     account = cursor.fetchall()
-    flash("Welcome {}".format(tmaname))
-    return render_template('missionadmin.html',page='nhiemvu',account=account)
+    return render_template('missionadmin.html',account=account)
 
 # Reward Management
 @app.route('/doithuong',methods=['GET','POST'])
@@ -286,30 +268,79 @@ def doithuong():
 @app.route('/nhiemvuuser',methods=['GET','POST'])
 def nhiemvuuser():
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM mission')
-    account = cursor.fetchall()
-
-    a = 2
-
-    cursor.execute("select mission.id_mission, mission.name_mission\
-        ,mission.startdate,mission.enddate , mission.point , \
+    cursor.execute("select missionprocess.id_process, mission.id_mission, mission.name_mission\
+        ,mission.describe,mission.startdate,mission.enddate , mission.point , \
         missionprocess.status  from employee, mission, missionprocess\
         where missionprocess.id_employee=employee.id_employee and \
         missionprocess.id_mission=mission.id_mission \
-        and employee.id_employee = %s",(a,))
+        and employee.email = %s",(tma,))
     x = cursor.fetchall()
     flash("Welcome {}".format(tmaname))
-    return render_template('nhiemvuuser.html',account=account , x=x)
+    return render_template('nhiemvuuser.html',x=x)
+# Hoàn thành nhiệm vụ
+@app.route('/done',methods=['GET','POST'])
+def done():
+    succ=""
+    idprocess = request.form['idprocess']
+    cursor = mysql.connection.cursor()
+    cursor.execute("select missionprocess.id_process, mission.id_mission, mission.name_mission\
+        ,mission.describe,mission.startdate,mission.enddate , mission.point , \
+        missionprocess.status  from employee, mission, missionprocess\
+        where missionprocess.id_employee=employee.id_employee and \
+        missionprocess.id_mission=mission.id_mission \
+        and employee.email = %s",(tma,))
+    x = cursor.fetchall()
+
+    cursor.execute("UPDATE missionprocess SET status = 'Hoàn thành' WHERE id_process = %s",(idprocess,))
+    mysql.connection.commit()
+    succ = "UPDATED SUCCESSFUL"
+
+    flash("Welcome {}".format(tmaname))
+
+    return render_template('nhiemvuuser.html',succ=succ,x=x)
+
+
+
+@app.route('/nhannhiemvu',methods=['GET','POST'])
+def nhannhiemvu():
+
+    cursor = mysql.connection.cursor()
+    # cursor.execute('SELECT * FROM mission')
+    # account = cursor.fetchall()
+    # flash("Welcome {}".format(tmaname))
+
+    idmisstion = request.form['idmission']
+    sta = "Dang lam"
+
+    # cursor.execute=("INSERT INTO missionprocess (id_employee, id_mission, status) VALUES (%s, %s, %s)",(idempl,idmisstion,sta,))
+    cursor.execute=("INSERT INTO missionprocess (id_employe, id_mission, status) VALUES (%s,%s,%s)",(idempl,idmisstion,sta,))
+
+    mysql.connection.commit()
+    succ = "Successfully"
+    return render_template('nhiemvuuser1.html',succ=succ)
+
+@app.route('/nhiemvuuser1',methods=['GET','POST'])
+def nhiemvuuser1():
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM mission')
+    account = cursor.fetchall()
+    flash("Welcome {}".format(tmaname))
+
+    return render_template('nhiemvuuser1.html',account=account)
+
 
 # Thông tin cá nhân user
 @app.route('/canhanuser')
 def canhanuser():
+   
     return render_template('editprofile.html')
 
 # Đổi thưởng user
 @app.route('/doithuonguser')
 def doithuonguser():
+  
     return render_template('exchange.html')
+
 
 
 app.run(debug=True)

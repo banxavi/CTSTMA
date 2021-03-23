@@ -1,9 +1,16 @@
-  
-{% extends 'layout.html' %}
+{% include 'header.html'%}
 
 {% block content %}
 <html>
-  <title>CTS TMA</title>
+  <head>  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
+
+    <title>CTS TMA</title>
+  </head>
+  
   <style>
     .container {
       text-align: center;
@@ -11,18 +18,24 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 100%
+      width: 100%;
+  
     }
+  
     .column {
-      float: left;
-      width: 50%;
-      padding: 10px;
-      
+      padding: 30px;
+      flex: 1;
+      display: flex
     }
+  
+    .img {
+      padding: 30px;
+    }
+  
     .row:after {
-      content: "";
-      display: table;
-      clear: both;
+      max-width: 1200px;
+      display: flex;
+      flex: 1;
     }
     h1 {
       color: red;
@@ -68,83 +81,163 @@
       font-size: 50px;
       font-weight: 500;
     }
+    .carousel-item {
+        height: 80vh;
+        min-height: 300px;
+        background: no-repeat scroll center scroll;
+        background-size: cover;
+
+      }
+      .carousel-item::before{
+        content:"";
+        display:block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: #000;
+        opacity: 0.7;
+
+      }
+    
   </style>
-<div>
-    <div>
           <body>
-            <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000" data-pause="false">
-              <!--Indicators-->
-              
-              <ol class="carousel-indicators">
-                <li data-target="#carousel-example-1z" data-slide-to="0" class="active"></li>
-                <li data-target="#carousel-example-1z" data-slide-to="1"></li>
-                <li data-target="#carousel-example-1z" data-slide-to="2"></li>
-              </ol>
-           <div  class="carousel-inner" role="listbox">
-             <div class="carousel-item active">
-               <img class="mySlides" src="/image/header.png" width="100%" height="800" style="opacity: 0.9;">
-            
+            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="5000" data-pause="false">
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                  aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                  aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                  aria-label="Slide 3"></button>
               </div>
-             <div class="carousel-item">
-               <img class="mySlides" src="/image/hinh1 (1).jpg" width="100%" height="800" style="opacity:0.9">
-            
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img src="/static/header.png" class="d-block w-100">
+                </div>
+                <div class="carousel-item">
+                  <img src="/static/hinh1 (1).jpg" class="d-block w-100">
+                </div>
+                <div class="carousel-item">
+                  <img src="/static/hinh1 (2).jpg" class="d-block w-100">
+                </div>
               </div>
-             <div class="carousel-item">  
-              <img class="mySlides" src="/image/hinh1 (2).jpg" width="100%" height="800" style="opacity:0.9">
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
             </div>
 
-            <a class="carousel-control-prev" href="#carousel-example-1z" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carousel-example-1z" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
-            </div>
-          </div>
           <div class="container">
-            <span class="text1">Welcome IN</span>
+            <span class="text1">Welcome To</span>
             <span class="text2">CTS TMA</span>
         </div>
-         </body>     
-     
-           <br>
-           <br>
-            <div class="row">
-                    <div class="column">
-                      <img class="mySlides" src="/image/1.png">
-                    </div>
-                    <div class="column">
-                      <span style="font-size: 50px; font-weight: 700; font-family:'Times New Roman', Times, serif; margin-right: 10px">Giới thiệu</span>
-                      <div>
-                        <p style="font-family: 'Times New Roman', Times, serif;" align="left">CTS TMA là trang web được phát triển bởi Intern TMA</p>
-                        <p style="font-family: 'Times New Roman', Times, serif;" align="left">Ở đây bạn có thể thử thách bản thân, tích lũy kinh nghiệm và có thể nhận được những phần quà hấp dẫn</p>
-                       
-                      </div>
-                    </div>
-            </div> 
+
+          <!--  -->
+          <br><br>
+         <main class="container1">
+          <section class="card" data-aos="fade-right">
+            <img src="/static/1.png" alt="" />
+            <div>
+              <h3>CTS TMA</h3>
+              <p>
+                Trang web chính thức dành cho các nhân viên công ty TMA, với mục đích gắn kết và nâng cao trách nhiệm trong công việc.
+              </p>
+              
+            </div>
+          </section>
+        
+          <section class="card" data-aos="fade-left">
+            <img src="/static/p-4.png" alt="" />
+            <div>
+              <h3>Con số</h3>
+              <p>
+               Với hơn 2500 nhân viên tham gia, 3500 nhiệm vụ đã được thực hiện và hàng trăm phần quà. Đó là những con số ấn tượng.
+              </p>
+            </div>
+          </section>
+        
+          <section class="card" data-aos="fade-right">
+            <img src="/static/p-5.png" alt="" />
+            <div>
+              <h3>Cơ hội</h3>
+              <p>
+                Đây là môi trường cho các nhân viên thể hiện tài năng của mình. 
+              </p>
+           
+            </div>
+          </section>
+        
+          <section class="card" data-aos="fade-left">
+            <img src="/static/p-6.png" alt="" />
+            <div>
+              <h3>Tham gia ngay</h3>
+              <p>
+                Hãy tham gia cùng với chúng tôi để hiện hiện khả năng của mình, teamwork, và nhận các phần thường hấp dẫn nhé!
+              </p>
+              <a href="#" class="btn">Join Us</a>
+            </div>
+          </section>
+        
+        
+          <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+          <script>
+            AOS.init();
+          </script>
+        
+        
+          <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+         </main>
+          
         <!-- --- -->
         <br><br>
-          <div class="row">
-            <div class="column">
-              <span style="font-size: 50px; font-weight: 700; font-family:'Times New Roman', Times, serif; margin-right: 10px">Giới thiệu</span>
-            </div>
-            <div class="column">
-              <img class="mySlides" src="/image/1.png">
-            </div>
-        </div> 
-        <br><br>
-        <div>
-          <img src="/image/header.png" width="100%" height="800" style="opacity: 0.9;">
-        </div>
+         
         <!--  -->
-      </form>
-      
-      </div>
-</div>
+
+        <div class="counter-up">
+          <div class="content">
+            <div class="box">
+              <div class="icon"><i class="fas fa-history" style="color: rgba(14, 158, 1, 0.788)"></i></div>
+              <div class="counter">724</div>
+              <div class="text">Thời gian nhiệm vụ</div>
+            </div>
+            <div class="box">
+              <div class="icon"><i class="fas fa-gift" style="color:rgb(194, 0, 58);"></i></div>
+              <div class="counter">{{nhiemvu}}</div>
+              <div class="text">Tổng số nhiệm vụ</div>
+            </div>
+            <div class="box">
+              <div class="icon"><i class="fas fa-users" style="color: rgba(224, 228, 15, 0.938)" ></i></div>
+              <div class="counter">{{nhanvien}}</div>
+              <div class="text">Tổng số nhân viên</div>
+            </div>
+            <div class="box">
+              <div class="icon"><i class="fas fa-award" style="color: rgba(9, 111, 228, 0.938)"></i></div>
+              <div class="counter"></div>
+              <div class="text">Tổng số phần quà</div>
+            </div>
+          </div>
+        </div>
+        
+        <script type="text/javascript">
+            $('.counter').counterUp({
+              delay: 3, time:700
+            });
+
+          </script>
+      </body>
+
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
 {% endblock %}
+{% include 'footer.html'%}
 </html>
+
 
 <script>
   $(function(){
@@ -153,3 +246,181 @@
     });
 });
 </script>
+
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
+<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+<!-- slider -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+<!--  -->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+*{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Poppins', sans-serif;
+}
+
+.counter-up{
+background: url("images/bg-2.jpeg") no-repeat;
+min-height: 50vh;
+background-size: cover;
+background-attachment: fixed;
+padding: 0 50px;
+position: relative;
+display: flex;
+align-items: center;
+}
+.counter-up::before{
+position: absolute;
+content: "";
+top: 0;
+left: 0;
+height: 100%;
+width: 100%;
+background: rgba(255, 255, 255, 0.8);
+}
+.counter-up .content{
+z-index: 1;
+position: relative;
+display: flex;
+width: 100%;
+height: 100%;
+flex-wrap: wrap;
+align-items: center;
+justify-content: space-between;
+}
+.counter-up .content .box{
+border: 1px dashed rgba(255,255,255,0.6);
+width: calc(25% - 30px);
+border-radius: 5px;
+display: flex;
+align-items: center;
+justify-content: space-evenly;
+flex-direction: column;
+padding: 20px;
+}
+.content .box .icon{
+font-size: 60px;
+color: #030000;
+}
+.content .box .counter{
+font-size: 50px;
+font-weight: 500;
+color: #000000;
+font-family: sans-serif;
+}
+.content .box .text{
+font-weight: 400;
+color: rgb(0, 0, 0);
+}
+@media screen and (max-width: 1036px) {
+.counter-up{
+  padding: 50px 50px 0 50px;
+}
+.counter-up .content .box{
+  width: calc(50% - 30px);
+  margin-bottom: 50px;
+}
+}
+@media screen and (max-width: 580px) {
+.counter-up .content .box{
+  width: 100%;
+}
+}
+@media screen and (max-width: 500px) {
+.wrapper{
+  padding: 20px;
+}
+.counter-up{
+  padding: 30px 20px 0 20px;
+}
+}
+
+</style>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-size: 1.3rem;
+    font-family: 'Oswald', sans-serif;
+    background: #f9f9f9;
+  }
+
+  a {
+    color: #333;
+    text-decoration: none;
+  }
+
+  .container1 {
+    max-width: 1100px;
+    margin: auto;
+    overflow: auto;
+    padding: 0 2rem;
+  }
+
+
+
+  img {
+    width: 100%;
+  }
+
+  .card {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 2rem;
+    background: #f1f1f1;
+    margin-bottom: 2rem;
+  }
+
+  .card h3 {
+    margin-bottom: 2rem;
+  }
+
+  .card img {
+    height: 400px;
+  }
+
+  .card>div {
+    padding: 2rem;
+  }
+
+  .card:nth-child(even) img {
+    order: 2;
+  }
+
+
+  .btn {
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    padding: 0.8rem 1.8rem;
+    margin-top: 2rem;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    opacity: 0.8;
+  }
+
+  @media(max-width:600px) {
+    .card {
+      display: block;
+    }
+  }
+</style>

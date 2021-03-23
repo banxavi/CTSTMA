@@ -1,4 +1,5 @@
 from typing import ContextManager
+from flask.globals import g
 from flask.templating import render_template
 from flask import Flask, render_template, redirect,url_for,request,flash,session,sessions
 from app import app
@@ -21,17 +22,7 @@ mysql = MySQL(app)
 
 # app = Flask(__name__,template_folder='../app/templates')
 
-# Function HOME
-@app.route('/',methods=['GET','POST'])
-def index():
-    
-    if 'idname' in session: 
-        return render_template('home.html')
-    else:
-        return render_template('res.html')
-@app.route('/ha',methods=['GET','POST'])
-def ha():
-        return render_template('home.html',)
+
 # Function logi
 @app.route('/logi',methods=['GET','POST'])
 def logi():
@@ -93,23 +84,6 @@ def signup():
             mysql.connection.commit()
             loi = "Sign up succesfully"
     return render_template("res.html",loi=loi)
-
-
-# Function LOGOUT
-@app.route('/logout')
-def logout():
-    session.pop('idname', None)
-    return render_template("res.html")
-
-# Function LAYOUT MENU
-@app.route('/layout')
-def layout():
-    return render_template("layout.html")
-
-# Function HOME
-@app.route('/home',methods=['GET'])
-def home():
-    return render_template("home.html")
 
 
 # Function EMPLOYEE MANAGEMENT
@@ -260,7 +234,6 @@ def doithuong():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM exchange')
     account = cursor.fetchall()
-    flash("Welcome {}".format(tmaname))
     return render_template('rewardadmin.html',account=account)
 
 # Danh sách nhiệm vụ user
@@ -299,32 +272,28 @@ def done():
 
     return render_template('nhiemvuuser.html',succ=succ,x=x)
 
-
-
-@app.route('/nhannhiemvu',methods=['GET','POST'])
-def nhannhiemvu():
-
+# Chức năng nhận nhiệm vụ available
+@app.route('/nhannhiemvu/<id>/',methods=['GET','POST'])
+def nhannhiemvu(id):
     cursor = mysql.connection.cursor()
-    # cursor.execute('SELECT * FROM mission')
-    # account = cursor.fetchall()
-    # flash("Welcome {}".format(tmaname))
-
-    idmisstion = request.form['idmission']
-    sta = "Dang lam"
-
-    # cursor.execute=("INSERT INTO missionprocess (id_employee, id_mission, status) VALUES (%s, %s, %s)",(idempl,idmisstion,sta,))
-    cursor.execute=("INSERT INTO missionprocess (id_employe, id_mission, status) VALUES (%s,%s,%s)",(idempl,idmisstion,sta,))
-
-    mysql.connection.commit()
-    succ = "Successfully"
-    return render_template('nhiemvuuser1.html',succ=succ)
+    a = 1
+    sta = "dang lam"
+    # cursor.execute=('INSERT INTO missionprocess (id_employe, id_mission, status) \
+    # VALUES (%s,%s,%s)',(a,id,sta))
+    cursor.execute('INSERT INTO `cts`.`missionprocess` (`id_employee`, `id_mission`, `status`) \
+VALUES (%s,%s,%s)',(1,id,sta,))
+    
+    if request.method == "GET":
+        mysql.connection.commit()
+        succ =str(id) + sta 
+        return render_template('nhiemvuuser1.html',succ=succ)
 
 @app.route('/nhiemvuuser1',methods=['GET','POST'])
 def nhiemvuuser1():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM mission')
     account = cursor.fetchall()
-    flash("Welcome {}".format(tmaname))
+    # flash("Welcome {}".format(tmaname))
 
     return render_template('nhiemvuuser1.html',account=account)
 
@@ -334,12 +303,6 @@ def nhiemvuuser1():
 def canhanuser():
    
     return render_template('editprofile.html')
-
-# Đổi thưởng user
-@app.route('/doithuonguser')
-def doithuonguser():
-  
-    return render_template('exchange.html')
 
 
 

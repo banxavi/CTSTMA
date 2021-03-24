@@ -197,6 +197,7 @@ $(document).ready(function(){
                         <th>Ngày bắt đầu</th>
                         <th>Ngày kết thúc</th>
                         <th>Điểm<i class="fa fa-sort"></i></th>
+                        <th>Số lượng còn<i class="fa fa-sort"></i></th>
                         <th>Trạng thái<i class="fa fa-sort"></i></th>
                         <th>Tác vụ</th>
                     </tr>
@@ -211,6 +212,7 @@ $(document).ready(function(){
                         <td style="text-align: center;"><input style="text-align: center;" type="date"  value="{{a.2}}" readonly></td>
                         <td style="text-align: center;"><input style="text-align: center;" type="date" value="{{a.3}}"readonly></td>
                         <td style="text-align: center;">{{a.4}}</td>
+                        <td style="text-align: center;">{{a.7}}</td>
                         <td style="text-align: center;">{{a.6}}</td>
                         <td style="text-align: center;">
                             <a href="/view/{{a.0}}"  data-toggle="modal" data-target="#modalview{{a.0}}" class="view" title="View" ><i class="material-icons">remove_red_eye</i></a>

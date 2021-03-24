@@ -22,6 +22,23 @@ mysql = MySQL(app)
 
 # app = Flask(__name__,template_folder='../app/templates')
 
+# Function HOME
+@app.route('/',methods=['GET','POST'])
+def index():
+    global email
+    global name
+    global idplo
+    if 'idname' in session: 
+        email= session['idname']
+        cursor = mysql.connection.cursor() 
+        cursor.execute('SELECT * FROM employee WHERE email = %s', (email,))
+        table = cursor.fetchone()
+        name = table[3]
+        idplo = table[0]
+        return render_template('home.html', idname = email)
+    else:
+        return render_template('res.html')
+
 
 # Function logi
 @app.route('/logi',methods=['GET','POST'])
@@ -38,7 +55,6 @@ def logi():
         cursor = mysql.connection.cursor() 
         cursor.execute('SELECT * FROM employee WHERE email = %s AND password = %s', (tma, password,))
         account = cursor.fetchone()
-        # idempl = account[0]
 
         if tma==configadmin.username and password==configadmin.password:
             session['idname'] = request.form['idname']  
@@ -246,9 +262,9 @@ def nhiemvuuser():
         missionprocess.status  from employee, mission, missionprocess\
         where missionprocess.id_employee=employee.id_employee and \
         missionprocess.id_mission=mission.id_mission \
-        and employee.email = %s",(tma,))
+        and employee.email = %s",(email,))
     x = cursor.fetchall()
-    flash("Welcome {}".format(tmaname))
+    flash("Welcome {}".format(name))
     return render_template('nhiemvuuser.html',x=x)
 # Hoàn thành nhiệm vụ
 @app.route('/done',methods=['GET','POST'])
@@ -261,14 +277,14 @@ def done():
         missionprocess.status  from employee, mission, missionprocess\
         where missionprocess.id_employee=employee.id_employee and \
         missionprocess.id_mission=mission.id_mission \
-        and employee.email = %s",(tma,))
+        and employee.email = %s",(email,))
     x = cursor.fetchall()
 
     cursor.execute("UPDATE missionprocess SET status = 'Hoàn thành' WHERE id_process = %s",(idprocess,))
     mysql.connection.commit()
     succ = "UPDATED SUCCESSFUL"
 
-    flash("Welcome {}".format(tmaname))
+    flash("Welcome {}".format(name))
 
     return render_template('nhiemvuuser.html',succ=succ,x=x)
 
@@ -276,16 +292,16 @@ def done():
 @app.route('/nhannhiemvu/<id>/',methods=['GET','POST'])
 def nhannhiemvu(id):
     cursor = mysql.connection.cursor()
-    a = 1
-    sta = "dang lam"
-    # cursor.execute=('INSERT INTO missionprocess (id_employe, id_mission, status) \
-    # VALUES (%s,%s,%s)',(a,id,sta))
+    a=1
+    sta = "Đang làm"
     cursor.execute('INSERT INTO `cts`.`missionprocess` (`id_employee`, `id_mission`, `status`) \
-VALUES (%s,%s,%s)',(1,id,sta,))
-    
+VALUES (%s,%s,%s)',(idplo,id,sta,))
+
+    cursor.execute('UPDATE mission SET sum_mission=sum_mission-1 where id_mission=%s',(a,))
     if request.method == "GET":
         mysql.connection.commit()
         succ =str(id) + sta 
+
         return render_template('nhiemvuuser1.html',succ=succ)
 
 @app.route('/nhiemvuuser1',methods=['GET','POST'])
@@ -293,19 +309,14 @@ def nhiemvuuser1():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM mission')
     account = cursor.fetchall()
-    # flash("Welcome {}".format(tmaname))
-
+    flash("Welcome {}".format(name))
     return render_template('nhiemvuuser1.html',account=account)
 
 
 # Thông tin cá nhân user
 @app.route('/canhanuser')
 def canhanuser():
-   
     return render_template('editprofile.html')
-
-
-
 app.run(debug=True)
 
 

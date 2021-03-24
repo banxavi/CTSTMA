@@ -55,22 +55,21 @@ CTS TMA</div>
 <div class="field btn">
               <div class="btn-layer">
 </div>
-
 <input type="submit" value="Xác nhận">
             </div>
 <div  class="signup-link">
 Chưa có tài khoản? <a style="color: blue;" href="">Đăng ký ngay</a></div>
 </form>
-<form action="#" class="signup">
-            <div class="field">
-              <input type="text"  placeholder="Nhập email" required>
-            </div>
-<div class="field btn">
-              <div class="btn-layer">
-</div>
-<input type="submit" value="Xác nhận" data-toggle="modal" data-target="#myModal">
-            </div>
-</form>
+
+        <form action="{{url_for('Dang_ky')}}" class="signup" method="POST">
+                    <div class="field">
+                          <input type="text" name="email" placeholder="Nhập email" required>
+                    </div>
+                    <div class="field btn">
+                      <div class="btn-layer"></div>
+                      <input type="submit" value="Xác nhận" data-toggle="modal" data-target="#myModal">
+                    </div>
+        </form>
 
 </div>
 </div>

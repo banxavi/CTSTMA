@@ -7,20 +7,87 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors 
 import pymysql
 import re
+import smtplib ,ssl
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from pymysql import cursors
 from werkzeug.utils import format_string
 import configadmin
+from flask_mail import Mail,Message
+from email.mime.text import MIMEText 
+from email.mime.multipart import MIMEMultipart 
 
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-
+app.config.from_pyfile('config.cfg')
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'cts'
 mysql = MySQL(app) 
-
+mail = Mail(app)
+s = URLSafeTimedSerializer('thisisascrect!')
 # app = Flask(__name__,template_folder='../app/templates')
+
+
+#Chuc nang dang ky tai khoan
+@app.route('/la')
+def la():
+    return render_template('form_mail.html')
+@app.route('/Dang_ky',methods=['GET', 'POST'])
+def Dang_ky():
+    if request.method == 'GET':
+        return render_template('res.html')
+    email = request.form['email']
+    token = s.dumps(email, salt ='email-confirm')
+    #msg = Message('Confirm email', sender="hoangviet1807@gmail.com", recipients=[email])
+    
+    sender_email = "hoangviet1807@gmail.com"
+    receiver_email = email
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = "multipart test" 
+    msg["From"] = sender_email 
+    msg["To"] = receiver_email 
+    link = url_for('confirm_email', token = token, _external = True)
+    text = """\ Hi, Check out the new post on the Mailtrap blog: SMTP Server for Testing: Cloud-based or Local? https://blog.mailtrap.io/2018/09/27/cloud-or-local-smtp-server/ Feel free to let us know what content would be useful for you!""" 
+    html = render_template('form_mail.html')
+    
+    part1 = MIMEText(text,'plain')
+    part2 = MIMEText(html,'html')
+
+    msg.attach(part1)
+    msg.attach(part2)
+    
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(sender_email, "hoangviet01")
+        server.sendmail(
+        sender_email, receiver_email, msg.as_string()
+    )
+    return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+   
+#Chức năng xác nhận link confirm gmail
+@app.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=36000)
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO employee (email) VALUES (%s)", (email,))
+        mysql.connection.commit()
+        return redirect(url_for('change_pass', email = email))
+    except SignatureExpired:
+        return '<h1> The token is expired </h1>' 
+
+#Chức năng update mật khẩu
+@app.route('/change_pass', methods=['GET','POST'])
+def change_pass():
+    email = request.args.get('email', None)
+    if request.method == 'POST':
+        password = request.form['password']
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE employee SET password=%s WHERE email=%s", (password,email))
+        mysql.connection.commit()
+        return redirect(url_for('logi'))
+    return render_template('update_password.html', email = email)
 
 
 # Function logi
@@ -303,8 +370,6 @@ def nhiemvuuser1():
 def canhanuser():
    
     return render_template('editprofile.html')
-
-
 
 app.run(debug=True)
 

@@ -49,4 +49,7 @@ def home():
 @app.route('/doithuonguser')
 def doithuonguser():
     return render_template('exchange.html')
-  
+
+@app.route('/ax')
+def ax():
+    return render_template("update_password.html")

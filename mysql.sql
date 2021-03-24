@@ -39,7 +39,7 @@ INSERT INTO `cts`.`mission`
 (`name_mission`, `startdate`, `enddate`, `point`, `describe`, `state`, `sum_mission`) 
 VALUES ('Ngu', '2021-1-1', '2022-1-1', '22', 'an com', 'CON', '22');
 
-select count (*) from mission
+select sum(id_mission) from mission
 
 INSERT INTO missionprocess
  (id_employee, id_mission, status)

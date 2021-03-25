@@ -24,28 +24,50 @@
     <img src="https://img4.thuthuatphanmem.vn/uploads/2020/03/23/anh-de-thuong-cua-rose-black-pink_051300075.jpg" alt="Avatar" style="width:80px;height:80px;border:0;" class="avatar">
       </div>
     <a style="padding: 0 100px;" href="$">Upload file</a>
-    <form action="/#" method="POST"> 
+    <form action= "/capnhat" method="POST"> 
+    
+    {%with messages = get_flashed_messages()%}
+
+    {%if messages%}
+
+    {% for message in messages %}
+
+    <div class="alert alert-success alert-dismissable" role="alert">
+
+     <button type="button" class="close" data-dismiss="alert" aria-label ="close">
+
+         <span aria-hidden="true">&times;</span>
+
+     </button>
+        {{message}}
 
 
+    </div>
+
+
+    {%endfor%}
+    {%endif%}
+    {%endwith%}
+    {% for e in employee %}
     <div style="padding: 0 100px;" class="form-group">
     <div class="col-md-6.5 text-right">
-        <label name ="editdiem" value =""><b>Điểm:1000</b></label>
+        <label name ="editdiem" value ="e.9"><b>Điểm:{{e.9}}</b></label>
         
     </div>
     </div>
     <div style="padding: 0 100px;" class="form-group">
       <label for="usr">Họ Tên:</label>
-      <input type="text" class="form-control" name="edithoten">
+      <input type="text" class="form-control" value="{{e.3}}" name="edithoten" required>
     </div>
     <div style="padding: 0 100px;" class="form-group">
       <div class="row">
                 <div class="col">
                     <label for="pwd">Địa Chỉ:</label>
-                    <input type="text" class="form-control" name="editdiachi">
+                    <input type="text" class="form-control" value="{{e.5}}"name="editdiachi" required>
                 </div>
                 <div class="col">
                     <label for="pwd">Email:</label>
-                    <input type="email" class="form-control" name="editemail">
+                    <input type="email" readonly class="form-control"value="{{e.1}}" name="editemail" required>
                 </div>
         </div>    
     </div>
@@ -53,11 +75,11 @@
       <div class="row">
                 <div class="col">
                     <label for="pwd">Ngày sinh:</label>
-                    <input type="date" class="form-control" name="editngaysinh">
+                    <input type="date" class="form-control" value="{{e.4}}"name="editngaysinh"required>
                 </div>
                 <div class="col">
                     <label for="pwd">Số Điện Thoại:</label>
-                    <input type="number" class="form-control" name="editsodt">
+                    <input type="number" class="form-control" value="{{e.8}}"name="editsodt"required>
                 </div>
         </div>        	
     </div>
@@ -66,22 +88,23 @@
       <div class="row">
                 <div class="col">
                     <label for="pwd">Chức vụ:</label>
-                    <input type="text" class="form-control" name="eidtchucvu">
+                    <input type="text" class="form-control" value="{{e.7}}"name="editchucvu"required>
                 </div>
                 <div class="col">
                     
                      <div class="input-group-prepend">
-                    <label class="input-group-text" for="inputGroupSelect01">Giới Tính</label>
+                    <label class="input-group-text"  for="inputGroupSelect01">Giới Tính</label>
                 </div>
-                <select class="custom-select" id="inputGroupSelect01">
-                    <option selected>Choose...</option>
-                    <option value="1">Nam</option>
-                    <option value="2">Nữ</option>
+                <select class="custom-select" name ="select"   id="inputGroupSelect01">
+                    <option selected value="{{e.6}}" >{{e.6}}</option>
+                    {% for  o in data  %}
+                    <option value="{{ o.name }}">{{ o.name }}</option>
+                    {% endfor %}
                 </select>
                 </div>
         </div>        	
     </div>
-
+{% endfor %}
     <div style="padding: 0 100px;" class = "form-group">
         <div class="col" align="center">
             <button type="submit" class="btn btn-primary">Cập Nhật</button>

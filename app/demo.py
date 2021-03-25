@@ -5,7 +5,7 @@ app = Flask(__name__, template_folder='templates')
 @app.route('/')
 def index():
 
-    return render_template('form_mail.html')
+    return render_template('forgot_pass.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

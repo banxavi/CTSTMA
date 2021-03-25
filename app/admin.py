@@ -40,11 +40,7 @@ def logout():
 def layout():
     return render_template("layout.html")
 
-# Function HOME
-@app.route('/home',methods=['GET'])
-def home():
-    return render_template("home.html")
-    
+
 # Đổi thưởng user
 @app.route('/doithuonguser')
 def doithuonguser():

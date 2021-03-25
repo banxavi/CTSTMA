@@ -191,7 +191,7 @@ $(document).ready(function(){
                         <td style="text-align: center;">{{a.6}}</td>
                         <td style="text-align: center;">
                             <a href="/view"  data-toggle="modal" data-target="#modalview{{a.0}}" class="view" title="Xem " ><i class="material-icons">remove_red_eye</i></a>
-                            <a href="/edit/{{a.0}}"  data-toggle="modal" data-target="#modaledit{{a.0}}" class="edit" title="Sửa" ><i class="material-icons">edit</i></a>
+                            <a href="#"  data-toggle="modal" data-target="#modaledit{{a.0}}" class="edit" title="Sửa" ><i class="material-icons">edit</i></a>
                             <a href="/delete/{{a.0}}" class="delete" title="Xóa" data-toggle="tooltip"><i class="material-icons">delete</i></a>
                         </td>
                     </tr>
@@ -296,7 +296,7 @@ $(document).ready(function(){
                          <h4 class="modal-title">Sửa nhiệm vụ</h4>
                       </div>
          <div class="modal-body">
-                         <form action="/edit" method="POST">
+                         <form action="/editnhiemvu" method="POST">
         
                                 <div class="form-group">      
                                     <label>ID:</label>
@@ -308,20 +308,21 @@ $(document).ready(function(){
                                    <input type="text" class="form-control" name="name" value="{{a.1}}" >        
                                 </div>          
                                 <div class="form-group">      
-                                    <textarea type="text" style="text-align: left;"  class="form-control" name="address" >{{a.5}}  
+                                    <label>Mô tả:</label>
+                                    <input type="text" style="text-align: left;" value="{{a.5}}"  class="form-control" name="mota" >
                      
-                                    </textarea>
+                                </input>
                                  </div>
                                  <div class="form-group">
                                     <div class="row">
                                         <div class="col">
                                             <label>Ngày bắt đầu:</label>
                                             
-                                            <input type="date" class="form-control" value="{{a.2}}" >
+                                            <input type="date" name="ngaybd" class="form-control" value="{{a.2}}" >
                                         </div>
                                         <div class="col">
                                             <label>Ngày kết thúc:</label>
-                                            <input type="date" class="form-control" value="{{a.3}}" >
+                                            <input type="date" name="ngaykt" class="form-control" value="{{a.3}}" >
                                         </div>
                                     </div>        	
                                 </div>
@@ -331,20 +332,20 @@ $(document).ready(function(){
                                         <div class="col">
                                             <label>Điểm:</label>
                                             
-                                            <input type="input" class="form-control" value="{{a.4}}" >
+                                            <input type="input" name="diem" class="form-control" value="{{a.4}}" >
                                         </div>
                                         <div class="col">
                                             <label>Số lượng:</label>
-                                            <input type="input" class="form-control" value="{{a.7}}" >
+                                            <input type="input" name="soluong" class="form-control" value="{{a.7}}" >
                                         </div>
                                     </div>        	
                                 </div>
                                 <div class="form-group">           
                                     <label>Trạng thái:</label>
                                     <select class="form-control" name="trangthai" > 
-                                        <option value="1">{{a.6}}</option>   
-                                        <option value="0">Hết</option>   
-                                        <option value="0">Hủy</option>   
+                                        <option value="{{a.6}}">{{a.6}}</option> 
+                
+
                                         </select>     
                                  </div>   
                              
@@ -374,20 +375,16 @@ $(document).ready(function(){
              <h4 class="modal-title">Thêm nhiệm vụ mới</h4>
           </div>
           <div class="modal-body">
-             <form action="/add" method="POST">
-                <div class="form-group">      
-                    <label>ID:</label>
-                    <input type="text" class="form-control" name="id"  >        
-                 </div> 
+             <form action="/addnhiemvu" method="POST">
                 <div class="form-group">      
                    <label>Tên nhiệm vụ:</label>
 
-                   <input type="text" class="form-control" name="name" >        
+                   <input type="text" class="form-control" name="namenvu" >        
                 </div>          
                 <div class="form-group">      
                     <label>Mô tả:</label>
                      
-                    <textarea  class="form-control" name="address" >        
+                    <textarea  class="form-control" name="mota" >        
                         </textarea>
                  </div>
                  <div class="form-group">
@@ -395,11 +392,11 @@ $(document).ready(function(){
                         <div class="col">
                             <label>Ngày bắt đầu:</label>
                             
-                            <input type="date" class="form-control">
+                            <input type="date" name="ngaybd" class="form-control">
                         </div>
                         <div class="col">
                             <label>Ngày kết thúc:</label>
-                            <input type="date" class="form-control" >
+                            <input type="date" name="ngaykt" class="form-control" >
                         </div>
                     </div>        	
                 </div>
@@ -409,20 +406,20 @@ $(document).ready(function(){
                         <div class="col">
                             <label>Điểm:</label>
                             
-                            <input type="input" class="form-control">
+                            <input type="input" name="diem" class="form-control">
                         </div>
                         <div class="col">
                             <label>Số lượng:</label>
-                            <input type="input" class="form-control">
+                            <input type="input" name="soluong" class="form-control">
                         </div>
                     </div>        	
                 </div>
                 <div class="form-group">           
                     <label>Trạng thái:</label>
                     <select class="form-control" name="trangthai" > 
-                        <option value="1">Còn</option>   
-                        <option value="0">Hết</option>   
-                        <option value="0">Hủy</option>   
+                        <option value="Còn">Còn</option>   
+                        <option value="Hết">Hết</option>   
+                        <option value="Hủy">Hủy</option>   
                         </select>     
                  </div>   
                 

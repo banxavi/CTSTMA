@@ -1,15 +1,22 @@
 from typing import ContextManager
 from flask.globals import g
 from flask.templating import render_template
-from flask import Flask, render_template, redirect,url_for,request,flash,session,sessions
+from flask import Flask, render_template, redirect, url_for, request, flash, session, sessions
 from app import app
-from flask_mysqldb import MySQL 
-import MySQLdb.cursors 
+from flask_mysqldb import MySQL
+import MySQLdb.cursors
 import pymysql
 import re
+import smtplib
+import ssl
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from pymysql import cursors
 from werkzeug.utils import format_string
 import configadmin
+from flask_mail import Mail, Message
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -19,6 +26,9 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'cts'
 mysql = MySQL(app) 
+mail = Mail(app)
+s = URLSafeTimedSerializer('thisisascrect!')
+
 
 # app = Flask(__name__,template_folder='../app/templates')
 
@@ -26,19 +36,31 @@ mysql = MySQL(app)
 @app.route('/',methods=['GET','POST'])
 def index():
     global email
-    global name
+    global name 
     global idplo
-    if 'idname' in session: 
+    if session['idname'] =="abc":
+        return render_template('home.html')
+
+    elif 'idname' in session: 
         email= session['idname']
         cursor = mysql.connection.cursor() 
         cursor.execute('SELECT * FROM employee WHERE email = %s', (email,))
         table = cursor.fetchone()
         name = table[3]
         idplo = table[0]
-        return render_template('home.html', idname = email)
+        return render_template('home.html', name=name,idname = email)
+   
     else:
         return render_template('res.html')
 
+@app.route('/home',methods=['GET','POST'])
+def ha():
+    if 'idname' in session: 
+        return render_template('home.html')
+    else:
+        return render_template('res.html')
+
+    
 
 # Function logi
 @app.route('/logi',methods=['GET','POST'])
@@ -51,55 +73,23 @@ def logi():
     if request.method == 'POST':
         tma = request.form['idname']
         password = request.form['password']
-        value = request.form.getlist('check') 
         cursor = mysql.connection.cursor() 
         cursor.execute('SELECT * FROM employee WHERE email = %s AND password = %s', (tma, password,))
         account = cursor.fetchone()
 
         if tma==configadmin.username and password==configadmin.password:
             session['idname'] = request.form['idname']  
-            return render_template('/home.html')
+            return render_template('/home.html' )
 
         if account:
-            session['idname'] = request.form['idname'] 
-            tmaname = account[3]             
+            session['idname'] = request.form['idname']      
             return render_template('/home.html')
 
         else:
             loi = 'Tài khoản hoặc mật khẩu sai'
     return render_template("res.html",loi=loi)
     
-#Function REGISTER 
-@app.route('/regis',methods=['GET','POST'])
-def signup():
-    loi =""
-    if request.method == 'POST':
-        firt_name = request.form['first_name']
-        last_name = request.form['last_name']
-        name = firt_name+" "+last_name
-        idname = request.form['idname']
-        password = request.form['password']
-        repassword = request.form['repassword']
-        address = request.form['address']
-        city = request.form['city']
-        country = request.form['country']
-        role = request.form['role']
-        cursor = mysql.connection.cursor() 
-        cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (idname,))
-        account = cursor.fetchone()
-        if account:
-            loi = 'Account already exists!'
-        elif not re.match(r'[A-Za-z0-9]+', idname):
-            loi = 'Id Name must contain only characters and numbers!'
-        elif not idname or not password or not name or not address  or not city or not country or not role :
-            loi = 'Please fill out the forma!'
-        elif password !=repassword:
-            loi = ' Comfirm password is wrong'
-        else:
-            cursor.execute('insert INTO  Account(NAME, IDNAME, PASSWORD,ADDRESS,CITY,COUNTRY,ROLE) VALUES (%s, %s, %s,%s,%s,%s,%s)',(name,idname,password,address,city,country,role,))
-            mysql.connection.commit()
-            loi = "Sign up succesfully"
-    return render_template("res.html",loi=loi)
+
 
 
 # Function EMPLOYEE MANAGEMENT
@@ -110,9 +100,9 @@ def employee():
     account = cursor.fetchall()
     a = 1
     cursor.execute('select mission.id_mission, employee.name_employ, mission.name_mission , mission.point , missionprocess.status  from \
-employee, mission, missionprocess \
-where missionprocess.id_employee=employee.id_employee and missionprocess.id_mission=mission.id_mission \
-and  employee.id_employee=%s',(a,))
+    employee, mission, missionprocess \
+    where missionprocess.id_employee=employee.id_employee and missionprocess.id_mission=mission.id_mission \
+    and  employee.id_employee=%s',(a,))
     x = cursor.fetchall()
     return render_template("employeeadmin.html",account=account,x=x)
 
@@ -158,84 +148,55 @@ def delete(id):
         return render_template("employeeadmin.html",account=account,ac=ac)
          
 
-#Function EDIT EMPLOYEE
-@app.route('/edit',methods=["GET","POST"])
+#Function EDIT nhiệm vụ
+@app.route('/editnhiemvu',methods=["GET","POST"])
 def edit():
+
     account=""
     succ = ""
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM Account')
-    account = cursor.fetchall()
-    if request.method == 'POST':
-        cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (tma,))
-        acc = cursor.fetchone()
-        flash("Welcome {}".format(acc[1]))
-        id = request.form.get('id')
-        name = request.form['name']
-        address = request.form['address']
-        city = request.form['city']
-        country = request.form['country']
-        sql="UPDATE Account SET NAME=%s, ADDRESS=%s, CITY =%s, COUNTRY=%s WHERE IDNAME=%s and TT=%s"
-        cursor.execute(sql,(name,address,city,country,id,acc[0]))
-        if acc[2] == id:
-            mysql.connection.commit()
-            succ = "UPDATED SUCCESSFUL"
-            cursor.execute('SELECT * FROM Account')
-            account = cursor.fetchall()
-            return render_template("employeeadmin.html",account=account,succ=succ)
-        else:
-            ac = "ONLY UPDATE YOUR INFORMATION"
-            return render_template("employeeadmin.html",account=account,ac=ac)
+  
+    # cursor.execute('SELECT * FROM mission')
+    # account = cursor.fetchall()
 
-# Add
-@app.route('/add',methods=["GET","POST"])
+    id = request.form['id']
+    namenv = request.form['name']
+    mota = request.form["mota"]
+    ngaybd = request.form['ngaybd']
+    ngaykt = request.form['ngaykt']
+    diem = request.form['diem']
+    soluong = request.form['soluong']
+    trangthai = request.form['trangthai']
+                
+    cursor.execute('update mission set name_mission=%s , startdate=%s, enddate = %s , point=%s, mota=%s, state=%s,sum_mission=%s \
+        where id_mission=%s', (namenv,ngaybd,ngaykt,diem,mota,trangthai,soluong,id,))
+    mysql.connection.commit()
+    succ = "UPDATED SUCCESSFUL"
+    return render_template("missionadmin.html",succ=succ)
+# Add nhiệm vụ
+@app.route('/addnhiemvu',methods=["GET","POST"])
 def add():
-    ac=""
+   
     succ =""
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM Account')
+    cursor.execute('SELECT * FROM mission')
     account = cursor.fetchall()
     if request.method == 'POST':
-        cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (tma,))
-        acc1 = cursor.fetchone()
-        firt_name = request.form['first_name']
-        last_name = request.form['last_name']
-        name = firt_name+" "+last_name
-        idname = request.form['idname']
-        password = request.form['password']
-        repassword = request.form['repassword']
-        address = request.form['address']
-        city = request.form['city']
-        country = request.form['country']
-        select = request.form.get('selectrole')
-        cursor.execute('SELECT * FROM Account WHERE IDNAME = %s', (idname,))
-        acc = cursor.fetchone()
-        flash("Welcome {}".format(tmaname))
-        if acc1[7]!="ADMIN":
-            ac = 'Only ADMIN ADD EMPLOYEE'
-            cursor.execute('SELECT * FROM Account')
-            account = cursor.fetchall()
-        elif acc:
-            ac = 'Account already exists!'
-            cursor.execute('SELECT * FROM Account')
-            account = cursor.fetchall()
-        elif not re.match(r'[A-Za-z0-9]+', idname):
-            ac = 'Id Name must contain only characters and numbers!'
-            cursor.execute('SELECT * FROM Account')
-            account = cursor.fetchall()
-        elif not idname or not password or not name or not address  or not city or not country or not select :
-            ac = 'Please fill out the form!'
-            cursor.execute('SELECT * FROM Account')
-            account = cursor.fetchall()
-        elif password !=repassword:
-            ac = ' Comfirm password is wrong'
-            cursor.execute('SELECT * FROM Account')
-            account = cursor.fetchall()
-        else:
-            cursor.execute('insert INTO  Account(NAME, IDNAME, PASSWORD,ADDRESS,CITY,COUNTRY,ROLE) VALUES (%s, %s, %s,%s,%s,%s,%s)',(name,idname,password,address,city,country,select,))
-            mysql.connection.commit()
-            succ = "Sign up username:"+ idname+" succesfully"
-    return render_template("employeeadmin.html",account=account,succ=succ,ac=ac)
+        namenv = request.form['namenvu']
+        mota = request.form['mota']
+        ngaybd = request.form['ngaybd']
+        ngaykt = request.form['ngaykt']
+        diem = request.form['diem']
+        soluong = request.form['soluong']
+        trangthai = request.form.get('trangthai')
+        
+        cursor.execute('insert INTO  mission\
+            (`name_mission`, `startdate`, `enddate`, `point`, `mota`, `state`, `sum_mission`) \
+                VALUES (%s, %s, %s,%s,%s,%s,%s)',\
+                    (namenv,ngaybd,ngaykt,diem,mota,trangthai,soluong,))
+        mysql.connection.commit()
+        succ = "Thêm thành công"
+        return render_template("missionadmin.html",account=account,succ=succ)
 # Mission Management
 @app.route('/nhiemvu',methods=['GET','POST'])
 def nhiemvu():
@@ -256,16 +217,24 @@ def doithuong():
 
 @app.route('/nhiemvuuser',methods=['GET','POST'])
 def nhiemvuuser():
-    cursor = mysql.connection.cursor()
-    cursor.execute("select missionprocess.id_process, mission.id_mission, mission.name_mission\
-        ,mission.describe,mission.startdate,mission.enddate , mission.point , \
-        missionprocess.status  from employee, mission, missionprocess\
-        where missionprocess.id_employee=employee.id_employee and \
-        missionprocess.id_mission=mission.id_mission \
-        and employee.email = %s",(email,))
-    x = cursor.fetchall()
-    flash("Welcome {}".format(name))
-    return render_template('nhiemvuuser.html',x=x)
+    if 'idname' in session: 
+        email= session['idname']
+        cursor = mysql.connection.cursor()
+        cursor.execute("select missionprocess.id_process, mission.id_mission, mission.name_mission\
+            ,mission.mota,mission.startdate,mission.enddate , mission.point , \
+            missionprocess.status  from employee, mission, missionprocess\
+            where missionprocess.id_employee=employee.id_employee and \
+            missionprocess.id_mission=mission.id_mission \
+            and employee.email = %s",(email,))
+        x = cursor.fetchall()
+        
+        cursor.execute('SELECT * FROM employee WHERE email = %s', (email,))
+        table = cursor.fetchone()
+        name = table[3]
+        flash("Welcome {}".format(name))
+        return render_template('nhiemvuuser.html',x=x)
+  
+       
 # Hoàn thành nhiệm vụ
 @app.route('/done',methods=['GET','POST'])
 def done():
@@ -273,7 +242,7 @@ def done():
     idprocess = request.form['idprocess']
     cursor = mysql.connection.cursor()
     cursor.execute("select missionprocess.id_process, mission.id_mission, mission.name_mission\
-        ,mission.describe,mission.startdate,mission.enddate , mission.point , \
+        ,mission.mota,mission.startdate,mission.enddate , mission.point , \
         missionprocess.status  from employee, mission, missionprocess\
         where missionprocess.id_employee=employee.id_employee and \
         missionprocess.id_mission=mission.id_mission \
@@ -292,12 +261,11 @@ def done():
 @app.route('/nhannhiemvu/<id>/',methods=['GET','POST'])
 def nhannhiemvu(id):
     cursor = mysql.connection.cursor()
-    a=1
     sta = "Đang làm"
     cursor.execute('INSERT INTO `cts`.`missionprocess` (`id_employee`, `id_mission`, `status`) \
 VALUES (%s,%s,%s)',(idplo,id,sta,))
 
-    cursor.execute('UPDATE mission SET sum_mission=sum_mission-1 where id_mission=%s',(a,))
+    cursor.execute('UPDATE mission SET sum_mission=sum_mission-1 where id_mission=%s',(id,))
     if request.method == "GET":
         mysql.connection.commit()
         succ =str(id) + sta 
@@ -318,5 +286,3 @@ def nhiemvuuser1():
 def canhanuser():
     return render_template('editprofile.html')
 app.run(debug=True)
-
-

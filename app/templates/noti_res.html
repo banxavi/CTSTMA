@@ -27,30 +27,17 @@
     </div>
 
     <div class="form-container">
-      <div class="slide-controls">
-        <input type="radio" name="slide" id="login" checked>
-        <input type="radio" name="slide" id="signup">
-        <label for="login" class="slide login">Cập nhật mật khẩu</label>
-        <div class="slider-tab">
-        </div>
-      </div>
       <div class="form-inner">
         </form>
         <form action="" class="signup" method="POST">
-          <p>Gmail của bạn: {{email}}</p>
-          <div class="field">
-            <input type="password" name="password" placeholder="Mật khẩu" required minlength="8">
-          </div>
-          <div class="field">
-            <input type="password" name="pass_confirm" placeholder="Xác nhận mật khẩu" required minlength="8">
-          </div>
-          <div class="field btn">
-            <div class="btn-layer"></div>
-            <input type="submit" value="Xác nhận" data-toggle="modal" data-target="#myModal">
-          </div>
-          {% if loi %}
-          <p style="color: red;"><strong>Thông báo:</strong> {{ loi }}
-          {% endif %}
+            <p style="visibility: hidden;"> hello{{email}}</p>
+            <p style="visibility: hidden;">{{token}}</p>
+          <h3>Link xác nhận đã được gởi tới Gmail của bạn. </h3>
+          <h3>Vui lòng truy cập Gmail để xác nhận đường link này</h3>
+          <br><br>
+            <li><a href="/logout">Quay lại đăng nhập</a></li>
+         
+          
         </form>
 
       </div>

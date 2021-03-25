@@ -36,4 +36,4 @@ def doithuonguser():
 
 @app.route('/ax')
 def ax():
-    return render_template("update_password.html")
+    return render_template("res.html")

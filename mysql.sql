@@ -12,6 +12,8 @@ select * from mission;
 INSERT INTO `cts`.`mission`
  (`name_mission`, `startdate`, `enddate`, `point`, `describe`, `state`, `sum_mission`) 
  VALUES ('Da banh', '2021/4/4', '2022/4/4', '50', 'Da banh tip cho tma', 'con', '12');
+ 
+
 select * from missionprocess;
 
 
@@ -27,7 +29,9 @@ select missionprocess.id_process, mission.id_mission, mission.name_mission
         missionprocess.status  from employee, mission, missionprocess
         where missionprocess.id_employee=employee.id_employee and 
         missionprocess.id_mission=mission.id_mission 
-        and employee.email = 'banxavi@gmail.com'
+        and employee.email = 'banxavi@gmail.com' 
+
+
 
 select * from missionprocess ;
 SELECT DISTINCT id_employee,id_mission , status FROM missionprocess where id_employee = 1 and id_mission=4;
@@ -35,6 +39,8 @@ select count * from missionprocess;
 INSERT INTO missionprocess (id_employee, id_mission, status) VALUES ('1', '2', 'Đang làm');
 
 select * from mission;
+UPDATE mission SET sum_mission = sum_mission-1 WHERE id_mission = 1 
+
 INSERT INTO `cts`.`mission` 
 (`name_mission`, `startdate`, `enddate`, `point`, `describe`, `state`, `sum_mission`) 
 VALUES ('Ngu', '2021-1-1', '2022-1-1', '22', 'an com', 'CON', '22');

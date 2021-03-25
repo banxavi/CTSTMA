@@ -59,7 +59,6 @@ def ha():
         return render_template('home.html')
     else:
         return render_template('res.html')
-
     
 
 # Function logi
@@ -277,12 +276,113 @@ def nhiemvuuser1():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM mission')
     account = cursor.fetchall()
-    flash("Welcome {}".format(name))
+    # flash("Welcome {}".format(name))
     return render_template('nhiemvuuser1.html',account=account)
 
 
 # Thông tin cá nhân user
 @app.route('/canhanuser')
 def canhanuser():
-    return render_template('editprofile.html')
+    cursor = mysql.connection.cursor()
+    cursor.execute("Select * from cts.employee where email = %s",(session['idname'],))
+    employee = cursor.fetchall()
+    return render_template('editprofile.html',employee = employee,data=[{'name':'Nam'},{'name':'Nữ'}])
+
+# cập nhập tin cá nhân user
+@app.route('/capnhat', methods =["POST"])
+def capnhat():
+    cursor = mysql.connection.cursor()
+
+    if request.method == 'POST':
+        
+        hoten = request.form['edithoten']
+        diachi = request.form['editdiachi']
+        ngaysinh = request.form['editngaysinh']
+        sodt = request.form['editsodt']
+        chucvu = request.form['editchucvu']
+        gioitinh = request.form['select']
+        cursor.execute("Update cts.employee set name_employ = %s,address = %s, birthday=%s,deparment=%s,phonenumber=%s,\
+        gender=%s where email = %s",(hoten,diachi,ngaysinh,chucvu,sodt,gioitinh,session['idname']))
+        mysql.connection.commit()
+        flash("Cập Nhật Thành Công")
+
+    return redirect(url_for('canhanuser'))
+
+
+
+@app.route('/la')
+def la():
+    return render_template('form_mail.html')
+@app.route('/Dang_ky', methods=['GET', 'POST'])
+def Dang_ky():
+    loidk = ""
+    if request.method == 'POST':
+       
+        email = request.form['email']
+        token = s.dumps(email, salt='email-confirm')
+        #msg = Message('Confirm email', sender="hoangviet1807@gmail.com", recipients=[email])
+        sender_email = "hoangviet1807@gmail.com"
+        receiver_email = email
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = "Link Confirm"
+        msg["From"] = sender_email
+        msg["To"] = receiver_email
+        link = url_for('confirm_email', token=token, _external=True)
+        text = """\Hi """
+        html = render_template('form_mail.html', link=link, email=email)
+        part1 = MIMEText(text, 'plain')
+        part2 = MIMEText(html, 'html')
+        msg.attach(part1)
+        msg.attach(part2)
+        cursor = mysql.connection.cursor() 
+        cursor.execute('SELECT * FROM Employee WHERE email = %s', (email,))
+        account = cursor.fetchone()
+        if account:
+            loidk = "Tài khoản này đã tồn tại"
+        else:
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+                server.login(sender_email, "hoangviet01")
+                server.sendmail(
+                    sender_email, receiver_email, msg.as_string().encode('utf-8')
+                )
+                return render_template('noti_res.html')
+        # return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+    return render_template('res.html', loidk = loidk)
+
+
+
+#Chức năng xác nhận link confirm gmail
+@app.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=36000)
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO employee (email) VALUES (%s)", (email,))
+        mysql.connection.commit()
+        return redirect(url_for('change_pass', email = email))
+    except SignatureExpired:
+        return '<h1> The token is expired </h1>' 
+
+#Chức năng update mật khẩu
+
+@app.route('/change_pass', methods=['GET', 'POST'])
+def change_pass():
+  
+    loi = ""
+    email = request.args.get('email', None)
+    if request.method == 'POST':
+        password = request.form['password']
+        pass_confirm = request.form['pass_confirm']
+        if password != pass_confirm:
+            loi = "Mật khẩu không khớp"
+        else:
+            cur = mysql.connection.cursor()
+            cur.execute("UPDATE employee SET password=%s WHERE email=%s",
+                        (password, email))
+            mysql.connection.commit()
+            session['idname'] = email
+
+            return render_template('/home.html', email = email)
+    return render_template('update_password.html', email=email, loi = loi)
 app.run(debug=True)

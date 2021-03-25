@@ -34,6 +34,6 @@ def layout():
 def doithuonguser():
     return render_template('exchange.html')
 
-@app.route('/ax')
+@app.route('/ax', methods=['GET','POST'])
 def ax():
-    return render_template("res.html")
+    return "dung roi"

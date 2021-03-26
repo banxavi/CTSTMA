@@ -39,7 +39,9 @@ select count * from missionprocess;
 INSERT INTO missionprocess (id_employee, id_mission, status) VALUES ('1', '2', 'Đang làm');
 
 select * from mission;
-UPDATE mission SET sum_mission = sum_mission-1 WHERE id_mission = 1 
+UPDATE mission SET sum_mission = sum_mission-1 WHERE id_mission = 1 ;
+
+UPDATE mission SET name_mission = "a" , startdate = "2021-04-04", enddate = "2021-04-04" , point = 1 , mota = "anh yeu em", state = "Con" , sum_mission = 4  where id_mission=11
 
 INSERT INTO `cts`.`mission` 
 (`name_mission`, `startdate`, `enddate`, `point`, `describe`, `state`, `sum_mission`) 

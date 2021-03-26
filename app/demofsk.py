@@ -38,8 +38,9 @@ def index():
     global email
     global name 
     global idplo
-    if session['idname'] =="abc":
-        return render_template('home.html')
+    if session['idname'] == "abc":
+        a = session['idname']
+        return render_template('home.html',idname=a)
 
     elif 'idname' in session: 
         email= session['idname']
@@ -48,7 +49,7 @@ def index():
         table = cursor.fetchone()
         name = table[3]
         idplo = table[0]
-        return render_template('home.html', name=name,idname = email)
+        return render_template('home.html',idname = email)
    
     else:
         return render_template('res.html')
@@ -56,7 +57,8 @@ def index():
 @app.route('/home',methods=['GET','POST'])
 def ha():
     if 'idname' in session: 
-        return render_template('home.html')
+        email= session['idname']
+        return render_template('home.html',idname = email)
     else:
         return render_template('res.html')
     
@@ -78,11 +80,14 @@ def logi():
 
         if tma==configadmin.username and password==configadmin.password:
             session['idname'] = request.form['idname']  
-            return render_template('/home.html' )
+            return render_template('home.html')
 
         if account:
-            session['idname'] = request.form['idname']      
-            return render_template('/home.html')
+            session['idname'] = request.form['idname']     
+            cursor = mysql.connection.cursor() 
+            cursor.execute('SELECT * FROM employee WHERE email = %s', (tma,))
+            table = cursor.fetchone()
+            return render_template('home.html',idname = tma)
 
         else:
             loi = 'Tài khoản hoặc mật khẩu sai'
@@ -214,69 +219,72 @@ def doithuong():
 
 # Danh sách nhiệm vụ user
 
-@app.route('/nhiemvuuser',methods=['GET','POST'])
-def nhiemvuuser():
+@app.route('/shownhiemvuuser',methods=['GET','POST'])
+def showuser():
     if 'idname' in session: 
         email= session['idname']
         cursor = mysql.connection.cursor()
         cursor.execute("select missionprocess.id_process, mission.id_mission, mission.name_mission\
-            ,mission.mota,mission.startdate,mission.enddate , mission.point , \
-            missionprocess.status  from employee, mission, missionprocess\
-            where missionprocess.id_employee=employee.id_employee and \
-            missionprocess.id_mission=mission.id_mission \
-            and employee.email = %s",(email,))
+                ,mission.mota,mission.startdate,mission.enddate , mission.point , \
+                missionprocess.status  from employee, mission, missionprocess\
+                where missionprocess.id_employee=employee.id_employee and \
+                missionprocess.id_mission=mission.id_mission \
+                and employee.email = %s",(email,))
         x = cursor.fetchall()
-        
+        return render_template('nhiemvuuser.html',x=x)
+
+# Lấy url của để show nhiệm vụ của user đang làm
+@app.route('/nhiemvuuser',methods=['GET','POST'])
+def nhiemvuuser():
+    global idplo1
+    global name1
+    if 'idname' in session: 
+        email= session['idname']
+        cursor = mysql.connection.cursor()
         cursor.execute('SELECT * FROM employee WHERE email = %s', (email,))
         table = cursor.fetchone()
-        name = table[3]
-        flash("Welcome {}".format(name))
-        return render_template('nhiemvuuser.html',x=x)
+        name1 = table[3]
+        idplo1 = table[0]
+        flash("Welcome {}".format(name1))
+        return redirect(url_for('showuser',idplo1=idplo1))
+        # return render_template('nhiemvuuser.html',idplo1=idplo1)
   
-       
 # Hoàn thành nhiệm vụ
 @app.route('/done',methods=['GET','POST'])
 def done():
     succ=""
     idprocess = request.form['idprocess']
     cursor = mysql.connection.cursor()
-    cursor.execute("select missionprocess.id_process, mission.id_mission, mission.name_mission\
-        ,mission.mota,mission.startdate,mission.enddate , mission.point , \
-        missionprocess.status  from employee, mission, missionprocess\
-        where missionprocess.id_employee=employee.id_employee and \
-        missionprocess.id_mission=mission.id_mission \
-        and employee.email = %s",(email,))
-    x = cursor.fetchall()
 
     cursor.execute("UPDATE missionprocess SET status = 'Hoàn thành' WHERE id_process = %s",(idprocess,))
     mysql.connection.commit()
-    succ = "UPDATED SUCCESSFUL"
-
-    flash("Welcome {}".format(name))
-
-    return render_template('nhiemvuuser.html',succ=succ,x=x)
+    succ = "Hoàn thành nhiệm vụ thành công"
+    flash("Welcome {}".format(name1))
+    return redirect(url_for('showuser',succ=succ))
 
 # Chức năng nhận nhiệm vụ available
 @app.route('/nhannhiemvu/<id>/',methods=['GET','POST'])
 def nhannhiemvu(id):
     cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM mission')
+    account = cursor.fetchall()
     sta = "Đang làm"
     cursor.execute('INSERT INTO `cts`.`missionprocess` (`id_employee`, `id_mission`, `status`) \
-VALUES (%s,%s,%s)',(idplo,id,sta,))
+VALUES (%s,%s,%s)',(idplo1,id,sta,))
 
     cursor.execute('UPDATE mission SET sum_mission=sum_mission-1 where id_mission=%s',(id,))
     if request.method == "GET":
         mysql.connection.commit()
-        succ =str(id) + sta 
-
-        return render_template('nhiemvuuser1.html',succ=succ)
+        succ = "Bạn đã nhận nhiệm vụ thành công, hãy bắt đầu nào"
+        flash("Welcome {}".format(name1))
+        return render_template('nhiemvuuser1.html',succ=succ,account=account)
 
 @app.route('/nhiemvuuser1',methods=['GET','POST'])
 def nhiemvuuser1():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM mission')
     account = cursor.fetchall()
-    # flash("Welcome {}".format(name))
+    flash("Welcome {}".format(name1))
     return render_template('nhiemvuuser1.html',account=account)
 
 
@@ -316,38 +324,42 @@ def la():
 @app.route('/Dang_ky', methods=['GET', 'POST'])
 def Dang_ky():
     loidk = ""
-    if request.method == 'POST':
-       
-        email = request.form['email']
-        token = s.dumps(email, salt='email-confirm')
-        #msg = Message('Confirm email', sender="hoangviet1807@gmail.com", recipients=[email])
-        sender_email = "hoangviet1807@gmail.com"
-        receiver_email = email
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = "Link Confirm"
-        msg["From"] = sender_email
-        msg["To"] = receiver_email
-        link = url_for('confirm_email', token=token, _external=True)
-        text = """\Hi """
-        html = render_template('form_mail.html', link=link, email=email)
-        part1 = MIMEText(text, 'plain')
-        part2 = MIMEText(html, 'html')
-        msg.attach(part1)
-        msg.attach(part2)
-        cursor = mysql.connection.cursor() 
-        cursor.execute('SELECT * FROM Employee WHERE email = %s', (email,))
-        account = cursor.fetchone()
-        if account:
-            loidk = "Tài khoản này đã tồn tại"
-        else:
-            context = ssl.create_default_context()
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-                server.login(sender_email, "hoangviet01")
-                server.sendmail(
-                    sender_email, receiver_email, msg.as_string().encode('utf-8')
-                )
-                return render_template('noti_res.html')
+    try:
+        if request.method == 'POST':
+        
+            email = request.form['email']
+            token = s.dumps(email, salt='email-confirm')
+            #msg = Message('Confirm email', sender="hoangviet1807@gmail.com", recipients=[email])
+            sender_email = "hoangviet1807@gmail.com"
+            receiver_email = email
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = "Link Confirm"
+            msg["From"] = sender_email
+            msg["To"] = receiver_email
+            link = url_for('confirm_email', token=token, _external=True)
+            text = """\Hi """
+            html = render_template('form_mail.html', link=link, email=email)
+            part1 = MIMEText(text, 'plain')
+            part2 = MIMEText(html, 'html')
+            msg.attach(part1)
+            msg.attach(part2)
+            cursor = mysql.connection.cursor() 
+            cursor.execute('SELECT * FROM Employee WHERE email = %s', (email,))
+            account = cursor.fetchone()
+            if account:
+                loidk = "Tài khoản này đã tồn tại"
+            else:
+                context = ssl.create_default_context()
+                with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+                    server.login(sender_email, "hoangviet01")
+                    server.sendmail(
+                        sender_email, receiver_email, msg.as_string().encode('utf-8')
+                    )
+                    return render_template('noti_res.html')
+    except:
+        loidk = "404 error"
         # return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+        return render_template('res.html', loidk = loidk)
     return render_template('res.html', loidk = loidk)
 
 

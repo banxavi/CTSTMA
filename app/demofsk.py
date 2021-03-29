@@ -16,6 +16,7 @@ import configadmin
 from flask_mail import Mail, Message
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import hashlib,uuid
 
 
 
@@ -23,7 +24,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '123456'
+app.config['MYSQL_PASSWORD'] = '12345678'
 app.config['MYSQL_DB'] = 'cts'
 mysql = MySQL(app) 
 mail = Mail(app)
@@ -72,8 +73,9 @@ def logi():
     if request.method == 'POST':
         tma = request.form['idname']
         password = request.form['password']
+        passhash = hashlib.md5(password.encode()).hexdigest()
         cursor = mysql.connection.cursor() 
-        cursor.execute('SELECT * FROM employee WHERE email = %s AND password = %s', (tma, password,))
+        cursor.execute('SELECT * FROM employee WHERE email = %s AND password = %s', (tma,  passhash,))
         account = cursor.fetchone()
 
         if tma==configadmin.username and password==configadmin.password:
@@ -317,11 +319,10 @@ def la():
 def Dang_ky():
     loidk = ""
     if request.method == 'POST':
-       
         email = request.form['email']
         token = s.dumps(email, salt='email-confirm')
         #msg = Message('Confirm email', sender="hoangviet1807@gmail.com", recipients=[email])
-        sender_email = "hoangviet1807@gmail.com"
+        sender_email = "holongk15@gmail.com"
         receiver_email = email
         msg = MIMEMultipart("alternative")
         msg["Subject"] = "Link Confirm"
@@ -342,7 +343,7 @@ def Dang_ky():
         else:
             context = ssl.create_default_context()
             with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-                server.login(sender_email, "hoangviet01")
+                server.login(sender_email, "hoxuanlong12345")
                 server.sendmail(
                     sender_email, receiver_email, msg.as_string().encode('utf-8')
                 )
@@ -374,14 +375,19 @@ def change_pass():
     if request.method == 'POST':
         password = request.form['password']
         pass_confirm = request.form['pass_confirm']
+        
         if password != pass_confirm:
             loi = "Mật khẩu không khớp"
         else:
+            
             cur = mysql.connection.cursor()
+            hashpass = hashlib.md5(password.encode('utf-8')).hexdigest()
             cur.execute("UPDATE employee SET password=%s WHERE email=%s",
-                        (password, email))
+                        (hashpass, email))
             mysql.connection.commit()
+           
             session['idname'] = email
+            
 
             return render_template('/home.html', email = email)
     return render_template('update_password.html', email=email, loi = loi)

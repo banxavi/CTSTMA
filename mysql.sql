@@ -40,18 +40,17 @@ INSERT INTO missionprocess (id_employee, id_mission, status) VALUES ('1', '2', '
 
 select * from mission;
 UPDATE mission SET sum_mission = sum_mission-1 WHERE id_mission = 1 ;
-
-UPDATE mission SET name_mission = "a" , startdate = "2021-04-04", enddate = "2021-04-04" , point = 1 , mota = "anh yeu em", state = "Con" , sum_mission = 4  where id_mission=11
-
-INSERT INTO `cts`.`mission` 
+UPDATE mission SET name_mission = "a" , startdate = "2021-04-04", enddate = "2021-04-04" , point = 1 , mota = "anh yeu em", state = "Con" , sum_mission = 4  where id_mission=11;
+select * from typemission,mission where typemission.id_mission=mission.id_mission;
+select * from typemission;
 (`name_mission`, `startdate`, `enddate`, `point`, `describe`, `state`, `sum_mission`) 
 VALUES ('Ngu', '2021-1-1', '2022-1-1', '22', 'an com', 'CON', '22');
 
-select sum(id_mission) from mission
+select * from mission;
 
 INSERT INTO missionprocess
  (id_employee, id_mission, status)
- VALUES ('2', '1', 'Hoàn thành')
+ VALUES ('2', '1', 'Hoàn thành');
 
  UPDATE `cts`.`missionprocess` SET `status` = 'Đang làm' WHERE (`id_process` = '4');
  UPDATE `cts`.`missionprocess` SET `status` = 'Đang làm' WHERE (`id_process` = '1');

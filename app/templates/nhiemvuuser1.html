@@ -216,7 +216,7 @@ $(document).ready(function(){
                         <td style="text-align: center;">{{a.6}}</td>
                         <td style="text-align: center;">
                             <a href="/view/{{a.0}}"  data-toggle="modal" data-target="#modalview{{a.0}}" class="view" title="View" ><i class="material-icons">remove_red_eye</i></a>
-                            <a href="/nhannhiemvu/{{a.0}}" data-toggle="tooltip"   class="accept" title="Nhận nhiệm vụ" ><i class="material-icons">add_shopping_cart</i></a>
+                            <a href="/nhannhiemvu/{{a.0}}" data-toggle="tooltip"   class="accept" title="Bạn có muốn nhận nhiệm vụ này chứ?" ><i class="material-icons">add_shopping_cart</i></a>
                             <!-- <a href="/edit/{{a.0}}"  data-toggle="modal" data-target="#modaledit{{a.0}}" class="edit" title="Edit" >Sửa</a>
                             <a href="/delete/{{a.0}}" class="delete" title="Delete" data-toggle="tooltip">Xóa</a> -->
                         </td>
@@ -228,11 +228,13 @@ $(document).ready(function(){
      
 
             {% if succ %}
-            <p style="color: rgb(30, 255, 0);"><strong>Alert:</strong> {{ succ }}
+            <p style="Font-size: 20px;
+            font-weight: 5;
+            color:rgb(0, 255, 34)"><strong>Thông báo:</strong> {{ succ }}
              {% endif %}
 
              {% if ac %}
-             <p style="color: rgb(255, 0, 0);"><strong>Alert:</strong> {{ ac }}
+             <p style="color: rgb(255, 0, 0);"><strong>Thông báo:</strong> {{ ac }}
               {% endif %}
               <!-- Modal VIEW -->
               {% for a in account %}

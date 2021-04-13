@@ -23,17 +23,8 @@ def logout():
     session.pop('idname', None)
     return render_template("res.html")
 
-# Function LAYOUT MENU
-@app.route('/layout')
-def layout():
-    return render_template("layout.html")
-
 
 # Đổi thưởng user
 @app.route('/doithuonguser')
 def doithuonguser():
     return render_template('exchange.html')
-
-@app.route('/ax', methods=['GET','POST'])
-def ax():
-    return "dung roi"

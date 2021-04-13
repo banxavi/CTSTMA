@@ -26,8 +26,8 @@ CTS TMA</div>
 </div>
 <div class="form-container">
         <div class="slide-controls">
-          <input type="radio" name="slide" id="login" checked>
-          <input type="radio" name="slide" id="signup">
+          <input type="radio" name="slide" id="login"checked >
+          <input type="radio" name="slide" id="signup" >
           <label for="login" class="slide login">Đăng nhập</label>
           <label for="signup" class="slide signup">Đăng ký</label>
           <div class="slider-tab">
@@ -37,7 +37,7 @@ CTS TMA</div>
           <form	action="/logi" method="POST" class="login">
             <div class="field">
               <input type="text" value="{{
-                request.form.idname }}"  name="idname" placeholder="Email" required>
+                request.form.idname }}"  name="idname" placeholder="Email hoặc tài khoản" required>
             </div>
 <div class="field">
               <input type="password" value="{{
@@ -46,25 +46,34 @@ CTS TMA</div>
             {% if loi %}
             <p style="color: red;"><strong>Thông báo:</strong> {{ loi }}
              {% endif %}
+             {% if loidk %}
+             <p style="color: red;"><strong>Thông báo:</strong> {{ loidk }}
+              {% endif %}
             <!-- <div class="row align-items-center remember">
                 <input type="checkbox" name="check" value="check" checked>Remember Me
             </div> -->
       
 <div class="">
-<a href="/">Forgot password?</a></div>
+<a href="" style="color: blue;">Bạn quên mật khẩu?</a></div>
 <div class="field btn">
               <div class="btn-layer">
 </div>
 
 <input type="submit" value="Xác nhận">
             </div>
-<div  class="signup-link">
-Chưa có tài khoản? <a style="color: blue;" href="">Đăng ký ngay</a></div>
+<div   class="signup-link">
+Chưa có tài khoản? <a style="color: blue;" href="#">Đăng ký ngay</a></div>
 </form>
+
 <form action="/Dang_ky" method="POST" class="signup">
+
             <div class="field">
-              <input type="text" name="email"  placeholder="Nhập email" required>
+              <input type="email" name="email" value="{{request.form['email']}}" placeholder="Nhập email"   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"> 
             </div>
+            {% if loidk %}
+            <p style="color: red;"><strong>Thông báo:</strong> {{ loidk }}
+             {% endif %}
+             
 <div class="field btn">
               <div class="btn-layer">
 </div>

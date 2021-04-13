@@ -185,7 +185,7 @@ $(document).ready(function(){
                     <a href="{{ url_for('nhiemvuuser1') }}">Nhiệm vụ đang có</a> 
                 </div>
                      </div>
-                     
+                          <input type="text" value="{{idplo}}" hidden>
             </div>
             <table id="example" class="table table-striped table-hover table-bordered">
                 <thead>
@@ -299,7 +299,7 @@ $(document).ready(function(){
          <div class="modal-body">
             <form action="/done" method="POST">     
                 <input type="text" value="{{a.0}}" name="idprocess" hidden>                                  
-                <label>Bạn có chắc muốn nhận nhiệm vụ <b>{{a.2}}</b> chứ?</label>
+                <label>Bạn đã hoàn thành nhiệm vụ " <b>{{a.2}}</b>"?</label>
                 <div><br/></div>
                 <div style="text-align: center;" class="form-group">
                 
@@ -323,6 +323,9 @@ $(document).ready(function(){
                              </table>                          
                          </div> 
 <!-- Modal Add Employee-->
+
+
+    
 
 
             {% if succ %}
